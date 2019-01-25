@@ -3,6 +3,7 @@ import { Color, Vector } from 'excalibur';
 import { Mold } from './mold';
 import { Player } from './player';
 import { TileMapCollisionDetection } from 'excalibur/dist/Traits/Index';
+import { noise, round } from './noise';
 
 const width = 800;
 const height = 600;
@@ -35,7 +36,8 @@ const tm = new ex.TileMap({
 let spriteTiles = new ex.SpriteSheet(tileSheet, 1, 1, 64, 64);
 tm.registerSpriteSheet('default', spriteTiles);
 tm.data.forEach((cell: ex.Cell) => {
-  if (Math.random() > 0.5) {
+  console.log({'cellX': cell.x, 'cellY': cell.y});
+  if (round(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 4) > 0) {
     cell.solid = true;
     cell.pushSprite(new ex.TileSprite('default', 0));
   }
