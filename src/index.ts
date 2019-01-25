@@ -13,13 +13,11 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-function preload ()
-{
+function preload(this: Phaser.Scene) {
     this.load.image('logo', 'assets/logo.png');
 }
 
-function create ()
-{
+function create(this: Phaser.Scene) {
     const logo = this.add.image(400, 150, 'logo');
 
     this.tweens.add({
