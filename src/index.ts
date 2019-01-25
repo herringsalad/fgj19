@@ -2,6 +2,7 @@ import * as ex from 'excalibur';
 import { Color, Vector } from 'excalibur';
 import { Mold } from './mold';
 import { Player } from './player';
+import { TileMapCollisionDetection } from 'excalibur/dist/Traits/Index';
 
 const width = 800;
 const height = 600;
@@ -21,6 +22,7 @@ game.add(new Mold(new Vector(400, 600)));
 const tileSheet = new ex.Texture('/assets/cheese.png');
 const mouseTexture = new ex.Texture('/assets/mouse.png');
 const loader = new ex.Loader([tileSheet, mouseTexture]);
+const tileMapCollision = new TileMapCollisionDetection();
 
 const tm = new ex.TileMap({
   x: 0,

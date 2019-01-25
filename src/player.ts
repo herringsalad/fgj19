@@ -5,7 +5,8 @@ import {
   Engine,
   Input,
   CollisionType,
-  CircleArea
+  CircleArea,
+  Cell
 } from 'excalibur';
 
 export class Player extends Actor {
@@ -19,24 +20,39 @@ export class Player extends Actor {
     this.collisionArea = new CircleArea({ pos: new Vector(0, 0), radius: 20 });
   }
 
-  public onInitialize(engine: Engine) {
+  onInitialize(engine: Engine) {
     this.addDrawing(this.texture.asSprite());
   }
+
+  eatCheese = (cell: Cell) => {
+    cell.clearSprites();
+    cell.solid = false;
+  };
 
   update(engine: Engine, delta: number) {
     super.update(engine, delta);
 
-    const mvVel = 128;
-
     let xVelocity = 0;
     let yVelocity = 0;
 
-    if (engine.input.keyboard.isHeld(Input.Keys.Left)) xVelocity -= mvVel;
-    if (engine.input.keyboard.isHeld(Input.Keys.Right)) xVelocity += mvVel;
-    if (engine.input.keyboard.isHeld(Input.Keys.Up)) yVelocity -= mvVel;
-    if (engine.input.keyboard.isHeld(Input.Keys.Down)) yVelocity += mvVel;
+    if (engine.input.keyboard.isHeld(Input.Keys.Left)) xVelocity -= 1;
+    if (engine.input.keyboard.isHeld(Input.Keys.Right)) xVelocity += 1;
+    if (engine.input.keyboard.isHeld(Input.Keys.Up)) yVelocity -= 1;
+    if (engine.input.keyboard.isHeld(Input.Keys.Down)) yVelocity += 1;
 
-    this.vel.x = xVelocity;
-    this.vel.y = yVelocity;
+    // set player movement speed
+    this.vel.x = xVelocity * 128;
+    this.vel.y = yVelocity * 128;
+
+    // try finding nearby cell in movement dir
+    const cell = engine.currentScene.tileMaps[0].getCellByPoint(
+      this.pos.x + xVelocity * 32,
+      this.pos.y + yVelocity * 32
+    );
+
+    // if solid cell found, dinner time :-)
+    if (cell && cell.solid) {
+      this.eatCheese(cell);
+    }
   }
 }
