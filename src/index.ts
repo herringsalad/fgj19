@@ -10,6 +10,6 @@ rectangle.collisionType = ex.CollisionType.Fixed;
 game.add(rectangle);
 game.start();
 
-game.input.pointers.primary.on('move', function (evt) {
-    rectangle.pos.x = evt.worldPos.x
+game.input.pointers.primary.on('move', (evt) => {
+    rectangle.pos.x = (<any>evt).worldPos.x
 });
