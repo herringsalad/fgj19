@@ -5,6 +5,7 @@ import { Player } from './player';
 import { TileMapCollisionDetection } from 'excalibur/dist/Traits/Index';
 import * as cheeseStructure from './cheeseBuilder';
 import { CheeseCell } from './cheeseBlocks';
+import { getTiles } from './tilebuilder';
 
 const width = 800;
 const height = 600;
@@ -21,31 +22,47 @@ for (let i = 0; i < Math.max(width / 64, height / 64); i++) {
 game.add(new Mold(new Vector(500, 500)));
 game.add(new Mold(new Vector(400, 600)));
 
-const tileSheet = new ex.Texture('/assets/cheese.png');
+const tileSheet = new ex.Texture('/assets/Kolo tiles.png');
 const mouseTexture = new ex.Texture('/assets/mouse.png');
 const loader = new ex.Loader([tileSheet, mouseTexture]);
 const tileMapCollision = new TileMapCollisionDetection();
 
+const rows = 12;
+const cols = 12;
+
 const tm = new ex.TileMap({
   x: 0,
   y: 0,
-  cellWidth: 64,
-  cellHeight: 64,
-  rows: 12,
-  cols: 12
+  cellWidth: 32,
+  cellHeight: 32,
+  rows: rows * 2,
+  cols: cols * 2
 });
-let spriteTiles = new ex.SpriteSheet(tileSheet, 1, 1, 64, 64);
+
+const mapdata = [];
+for (let col = 0; col < cols; col++) {
+  mapdata[col] = [];
+  for (let row = 0; row < cols; row++) {
+    mapdata[col][row] = Math.random() < 0.5;
+  }
+}
+
+const tiles = getTiles(mapdata);
+
+console.log(mapdata);
+console.log(tiles);
+
+let spriteTiles = new ex.SpriteSheet(tileSheet, 5, 3, 32, 32);
 tm.registerSpriteSheet('default', spriteTiles);
 tm.data.forEach((cell: CheeseCell) => {
   // console.log({'cellX': cell.x, 'cellY': cell.y});
-  if (cheeseStructure.centeredPerlin(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > .1) {
-    cell.solid = true;
-    cell.pushSprite(new ex.TileSprite('default', 0));
-  }
-  // if (cheeseStructure.perlin(new Vector(cell.x, cell.y).scale(1/64)) > .8) {
-  //   cell.solid = true;
-  //   cell.pushSprite(new ex.TileSprite('default', 0));
-  // }
+  //if (cheeseStructure.centeredPerlin(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > .1) {
+  console.log({'cellX': cell.x, 'cellY': cell.y});
+  //if (cheeseStructure.square(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > 0) {
+  const y = Math.floor(cell.index / tiles.length);
+  const x = cell.index % tiles.length;
+  cell.solid = (tiles[y][x] != 6);
+  cell.pushSprite(new ex.TileSprite('default', tiles[y][x]));
 });
 
 const rectangle = new ex.Actor(150, game.drawHeight - 40, 200, 20);
