@@ -3,7 +3,7 @@ import { Color, Vector } from 'excalibur';
 import { Mold } from './mold';
 import { Player } from './player';
 import { TileMapCollisionDetection } from 'excalibur/dist/Traits/Index';
-import { noise, round } from './noise';
+import * as cheeseStructure from './cheeseStructure';
 
 const width = 800;
 const height = 600;
@@ -37,7 +37,7 @@ let spriteTiles = new ex.SpriteSheet(tileSheet, 1, 1, 64, 64);
 tm.registerSpriteSheet('default', spriteTiles);
 tm.data.forEach((cell: ex.Cell) => {
   console.log({'cellX': cell.x, 'cellY': cell.y});
-  if (round(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 4) > 0) {
+  if (cheeseStructure.square(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > 0) {
     cell.solid = true;
     cell.pushSprite(new ex.TileSprite('default', 0));
   }

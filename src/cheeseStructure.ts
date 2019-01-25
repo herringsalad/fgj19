@@ -33,7 +33,20 @@ export function noise(x: Vector) {
 }
 
 export function round(p: Vector, center: Vector, r: number) {
+  `
+  function to generate a circle with radius r around center.
+  `
   if (p.distance(center) < r) {
+    return 1.;
+  }
+  return 0.;
+}
+
+export function square(p: Vector, center: Vector, a: number) {
+  `
+  function to generate a square with the side length a, centered on center.
+  `
+  if (Math.abs(p.x - center.x) < a / 2 && Math.abs(p.y - center.y) < a / 2) {
     return 1.;
   }
   return 0.;
