@@ -3,11 +3,14 @@ import {
   Cell,
   CircleArea,
   CollisionType,
+  Color,
   Engine,
   Input,
+  Polygon,
   Texture,
   Vector
 } from 'excalibur';
+import Vector2 = Phaser.Math.Vector2;
 
 export class Player extends Actor {
   texture: Texture;
@@ -30,6 +33,25 @@ export class Player extends Actor {
     this.addDrawing(this.texture.asSprite());
   }
 
+  maybeEat(
+    engine: Engine,
+    xVelocity: number,
+    yVelocity: number,
+    dx: number,
+    dy: number
+  ) {
+    // try finding nearby cell in movement dir
+    const cell = engine.currentScene.tileMaps[0].getCellByPoint(
+      this.pos.x + dx + 20 + xVelocity * 32,
+      this.pos.y + dy - 20 + yVelocity * 32
+    );
+
+    // if solid cell found, dinner time :-)
+    if (cell && cell.solid) {
+      this.eatCheese(cell);
+    }
+  }
+
   update(engine: Engine, delta: number) {
     super.update(engine, delta);
 
@@ -45,15 +67,9 @@ export class Player extends Actor {
     this.vel.x = xVelocity * 128;
     this.vel.y = yVelocity * 128;
 
-    // try finding nearby cell in movement dir
-    const cell = engine.currentScene.tileMaps[0].getCellByPoint(
-      this.pos.x + xVelocity * 32,
-      this.pos.y + yVelocity * 32
-    );
-
-    // if solid cell found, dinner time :-)
-    if (cell && cell.solid) {
-      this.eatCheese(cell);
-    }
+    this.maybeEat(engine, xVelocity, yVelocity, -20, -20);
+    this.maybeEat(engine, xVelocity, yVelocity, 20, -20);
+    this.maybeEat(engine, xVelocity, yVelocity, -20, 20);
+    this.maybeEat(engine, xVelocity, yVelocity, 20, 20);
   }
 }
