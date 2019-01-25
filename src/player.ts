@@ -4,7 +4,8 @@ import {
   Texture,
   Engine,
   Input,
-  CollisionType
+  CollisionType,
+  CircleArea
 } from 'excalibur';
 
 export class Player extends Actor {
@@ -15,6 +16,7 @@ export class Player extends Actor {
 
     this.texture = texture;
     this.collisionType = CollisionType.Active;
+    this.collisionArea = new CircleArea({ pos: new Vector(0, 0), radius: 20 });
   }
 
   public onInitialize(engine: Engine) {
