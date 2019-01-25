@@ -1,56 +1,51 @@
-import 'phaser';
 import * as Phaser from 'phaser';
 
-const config = {
-    type: Phaser.AUTO,
-    parent: 'phaser-example',
-    width: 800,
-    height: 600,
-    scene: {
-        preload: preload,
-        create: create,
-        update: update
-    },
-    physics: {
-        default: 'arcade'
-    }
-};
+class HelloWorldScene extends Phaser.Scene {
+  cursors: Phaser.Input.Keyboard.CursorKeys;
+  logo: Phaser.Physics.Arcade.Image;
 
-const game = new Phaser.Game(config);
-let cursors: Phaser.Input.Keyboard.CursorKeys;
-let logo: Phaser.Physics.Arcade.Image;
-
-function preload(this: Phaser.Scene) {
+  preload = () => {
     this.load.image('logo', 'assets/logo.png');
-}
+  };
 
-function create(this: Phaser.Scene) {
-    logo = this.physics.add
-        .image(400, 150, 'logo')
-        .setDrag(0.90)
-        .setDamping(true);
-    cursors = this.input.keyboard.createCursorKeys();
+  create = () => {
+    this.logo = this.physics.add
+      .image(400, 150, 'logo')
+      .setDrag(0.9)
+      .setDamping(true);
+    this.cursors = this.input.keyboard.createCursorKeys();
 
-    logo.setCollideWorldBounds(true);
-}
+    this.logo.setCollideWorldBounds(true);
+  };
 
-
-function update() {
+  update = () => {
     const speed = 400;
-    if (cursors.left.isDown) {
-        logo.setAccelerationX(-speed);
-    } else if (cursors.right.isDown) {
-        logo.setAccelerationX(speed);
+    if (this.cursors.left.isDown) {
+      this.logo.setAccelerationX(-speed);
+    } else if (this.cursors.right.isDown) {
+      this.logo.setAccelerationX(speed);
     } else {
-        logo.setAccelerationX(0);
-        //logo.setVelocityX(logo.body.velocity.x / 2);
+      this.logo.setAccelerationX(0);
+      //logo.setVelocityX(logo.body.velocity.x / 2);
     }
-    if (cursors.up.isDown) {
-        logo.setAccelerationY(-speed);
-    } else if (cursors.down.isDown) {
-        logo.setAccelerationY(speed);
+    if (this.cursors.up.isDown) {
+      this.logo.setAccelerationY(-speed);
+    } else if (this.cursors.down.isDown) {
+      this.logo.setAccelerationY(speed);
     } else {
-        logo.setAccelerationY(0);
-        //logo.setVelocityY(logo.body.velocity.y / 2);
+      this.logo.setAccelerationY(0);
+      //logo.setVelocityY(logo.body.velocity.y / 2);
     }
+  };
 }
+
+const game = new Phaser.Game({
+  type: Phaser.AUTO,
+  parent: 'phaser-example',
+  width: 800,
+  height: 600,
+  scene: HelloWorldScene,
+  physics: {
+    default: 'arcade'
+  }
+});
