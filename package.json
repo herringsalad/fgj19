@@ -1,0 +1,32 @@
+{
+  "name": "phaser3-project-template",
+  "version": "1.0.9",
+  "description": "A Phaser 3 Project Template",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "npm run build && webpack-dev-server --port=8000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/photonstorm/phaser3-project-template.git"
+  },
+  "author": "Richard Davey <rdavey@gmail.com> (http://www.photonstorm.com)",
+  "license": "MIT",
+  "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
+  "bugs": {
+    "url": "https://github.com/photonstorm/phaser3-project-template/issues"
+  },
+  "homepage": "https://github.com/photonstorm/phaser3-project-template#readme",
+  "devDependencies": {
+    "raw-loader": "^0.5.1",
+    "ts-loader": "^5.3.3",
+    "typescript": "^3.2.4",
+    "webpack": "4",
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "3"
+  },
+  "dependencies": {
+    "phaser": "^3.3.0"
+  }
+}
