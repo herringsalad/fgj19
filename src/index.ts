@@ -1,5 +1,5 @@
 import 'phaser';
-import CursorKeys = Phaser.Input.Keyboard.CursorKeys;
+import * as Phaser from 'phaser';
 
 const config = {
     type: Phaser.AUTO,
@@ -17,7 +17,7 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
-let cursors: CursorKeys;
+let cursors: Phaser.Input.Keyboard.CursorKeys;
 let logo: Phaser.Physics.Arcade.Image;
 
 function preload(this: Phaser.Scene) {
@@ -25,7 +25,10 @@ function preload(this: Phaser.Scene) {
 }
 
 function create(this: Phaser.Scene) {
-    logo = this.physics.add.image(400, 150, 'logo');
+    logo = this.physics.add
+        .image(400, 150, 'logo')
+        .setDrag(0.90)
+        .setDamping(true);
     cursors = this.input.keyboard.createCursorKeys();
 
     logo.setCollideWorldBounds(true);
@@ -33,18 +36,21 @@ function create(this: Phaser.Scene) {
 
 
 function update() {
+    const speed = 400;
     if (cursors.left.isDown) {
-        logo.setVelocityX(-160);
+        logo.setAccelerationX(-speed);
     } else if (cursors.right.isDown) {
-        logo.setVelocityX(160);
+        logo.setAccelerationX(speed);
     } else {
-        logo.setVelocityX(0);
+        logo.setAccelerationX(0);
+        //logo.setVelocityX(logo.body.velocity.x / 2);
     }
     if (cursors.up.isDown) {
-        logo.setVelocityY(-160);
+        logo.setAccelerationY(-speed);
     } else if (cursors.down.isDown) {
-        logo.setVelocityY(160);
+        logo.setAccelerationY(speed);
     } else {
-        logo.setVelocityY(0);
+        logo.setAccelerationY(0);
+        //logo.setVelocityY(logo.body.velocity.y / 2);
     }
 }
