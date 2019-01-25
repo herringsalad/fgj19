@@ -36,11 +36,15 @@ const tm = new ex.TileMap({
 let spriteTiles = new ex.SpriteSheet(tileSheet, 1, 1, 64, 64);
 tm.registerSpriteSheet('default', spriteTiles);
 tm.data.forEach((cell: ex.Cell) => {
-  console.log({'cellX': cell.x, 'cellY': cell.y});
-  if (cheeseStructure.square(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > 0) {
+  // console.log({'cellX': cell.x, 'cellY': cell.y});
+  if (cheeseStructure.centeredPerlin(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > .1) {
     cell.solid = true;
     cell.pushSprite(new ex.TileSprite('default', 0));
   }
+  // if (cheeseStructure.perlin(new Vector(cell.x, cell.y).scale(1/64)) > .8) {
+  //   cell.solid = true;
+  //   cell.pushSprite(new ex.TileSprite('default', 0));
+  // }
 });
 
 const rectangle = new ex.Actor(150, game.drawHeight - 40, 200, 20);
