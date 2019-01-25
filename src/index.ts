@@ -1,5 +1,5 @@
 import * as ex from 'excalibur';
-import {Cell, Color, Vector} from 'excalibur';
+import { Cell, Color, Vector } from 'excalibur';
 import { Mold } from './mold';
 import { Player } from './player';
 import { TileMapCollisionDetection } from 'excalibur/dist/Traits/Index';
@@ -54,7 +54,7 @@ function drawCell(cell: CheeseCell) {
   //if (cheeseStructure.square(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > 0) {
   const y = Math.floor(cell.index / tiles.length);
   const x = cell.index % tiles.length;
-  cell.solid = (tiles[y][x] != 6);
+  cell.solid = tiles[y][x] != 6;
   cell.pushSprite(new ex.TileSprite('default', tiles[y][x]));
 }
 
