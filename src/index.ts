@@ -3,7 +3,8 @@ import { Color, Vector } from 'excalibur';
 import { Mold } from './mold';
 import { Player } from './player';
 import { TileMapCollisionDetection } from 'excalibur/dist/Traits/Index';
-import * as cheeseStructure from './cheeseStructure';
+import * as cheeseStructure from './cheeseBuilder';
+import { CheeseCell } from './cheeseBlocks';
 
 const width = 800;
 const height = 600;
@@ -35,7 +36,7 @@ const tm = new ex.TileMap({
 });
 let spriteTiles = new ex.SpriteSheet(tileSheet, 1, 1, 64, 64);
 tm.registerSpriteSheet('default', spriteTiles);
-tm.data.forEach((cell: ex.Cell) => {
+tm.data.forEach((cell: CheeseCell) => {
   // console.log({'cellX': cell.x, 'cellY': cell.y});
   if (cheeseStructure.centeredPerlin(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > .1) {
     cell.solid = true;
