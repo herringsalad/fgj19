@@ -1,33 +1,21 @@
-import {
-  Actor,
-  Vector,
-  Texture,
-  Engine,
-  Input,
-  CollisionType,
-  CircleArea,
-  Cell
-} from 'excalibur';
+import {Actor, Cell, CircleArea, CollisionType, Engine, Input, Texture, Vector} from 'excalibur';
 
 export class Player extends Actor {
   texture: Texture;
+  eatCheese: (cell: Cell) => void;
 
-  constructor(initPos: Vector, texture: Texture) {
+  constructor(initPos: Vector, texture: Texture, eatCheese: (cell: Cell) => void) {
     super(initPos.x, initPos.y, 40, 40);
 
     this.texture = texture;
     this.collisionType = CollisionType.Active;
-    this.collisionArea = new CircleArea({ pos: new Vector(0, 0), radius: 20 });
+    this.collisionArea = new CircleArea({pos: new Vector(0, 0), radius: 20});
+    this.eatCheese = eatCheese;
   }
 
   onInitialize(engine: Engine) {
     this.addDrawing(this.texture.asSprite());
   }
-
-  eatCheese = (cell: Cell) => {
-    cell.clearSprites();
-    cell.solid = false;
-  };
 
   update(engine: Engine, delta: number) {
     super.update(engine, delta);

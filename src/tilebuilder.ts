@@ -69,8 +69,6 @@ function getMagic(
   );
 }
 
-console.assert(getMagic(1, 1, 1, 1, 1, 1, 1, 1, 0) == 30);
-
 // for a x,y map data (in col-first order), get 2x,2y tilemap with correct borders
 // Out of bounds is empty.
 export function getTiles(tilemap: boolean[][]): number[][] {
@@ -97,22 +95,20 @@ export function getTiles(tilemap: boolean[][]): number[][] {
     }
   }
 
-  console.log(tmp);
-
   for (let col = 0; col < tmp.length; col++) {
     out[col] = [];
     for (let row = 0; row < tmp[col].length; row++) {
-      const topLeft = (tmp[col - 1] || [])[row - 1] ? 0 : 1;
-      const top = (tmp[col - 1] || [])[row] ? 0 : 1;
-      const topRight = (tmp[col - 1] || [])[row + 1] ? 0 : 1;
+      const topLeft = (tmp[col - 1] || [])[row - 1] ? 1 : 0;
+      const top = (tmp[col - 1] || [])[row] ? 1 : 0;
+      const topRight = (tmp[col - 1] || [])[row + 1] ? 1 : 0;
 
-      const left = tmp[col][row - 1] ? 0 : 1;
-      const me = tmp[col][row] ? 0 : 1;
-      const right = tmp[col][row + 1] ? 0 : 1;
+      const left = tmp[col][row - 1] ? 1 : 0;
+      const me = tmp[col][row] ? 1 : 0;
+      const right = tmp[col][row + 1] ? 1 : 0;
 
-      const bottomLeft = (tmp[col + 1] || [])[row - 1] ? 0 : 1;
-      const bottom = (tmp[col + 1] || [])[row] ? 0 : 1;
-      const bottomRight = (tmp[col + 1] || [])[row + 1] ? 0 : 1;
+      const bottomLeft = (tmp[col + 1] || [])[row - 1] ? 1 : 0;
+      const bottom = (tmp[col + 1] || [])[row] ? 1 : 0;
+      const bottomRight = (tmp[col + 1] || [])[row + 1] ? 1 : 0;
       const magic = getMagic(
         topLeft,
         top,

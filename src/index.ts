@@ -1,5 +1,5 @@
 import * as ex from 'excalibur';
-import { Color, Vector } from 'excalibur';
+import {Cell, Color, Vector} from 'excalibur';
 import { Mold } from './mold';
 import { Player } from './player';
 import { TileMapCollisionDetection } from 'excalibur/dist/Traits/Index';
@@ -27,7 +27,7 @@ const mouseTexture = new ex.Texture('/assets/mouse.png');
 const loader = new ex.Loader([tileSheet, mouseTexture]);
 const tileMapCollision = new TileMapCollisionDetection();
 
-const rows = 12;
+const rows = 8;
 const cols = 12;
 
 const tm = new ex.TileMap({
@@ -43,27 +43,33 @@ const mapdata = [];
 for (let col = 0; col < cols; col++) {
   mapdata[col] = [];
   for (let row = 0; row < cols; row++) {
-    mapdata[col][row] = Math.random() < 0.5;
+    mapdata[col][row] = Math.random() < 0.8;
   }
 }
 
-const tiles = getTiles(mapdata);
+let tiles = getTiles(mapdata);
 
-console.log(mapdata);
-console.log(tiles);
-
-let spriteTiles = new ex.SpriteSheet(tileSheet, 5, 3, 32, 32);
-tm.registerSpriteSheet('default', spriteTiles);
-tm.data.forEach((cell: CheeseCell) => {
+function drawCell(cell: CheeseCell) {
   // console.log({'cellX': cell.x, 'cellY': cell.y});
-  //if (cheeseStructure.centeredPerlin(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > .1) {
-  console.log({'cellX': cell.x, 'cellY': cell.y});
   //if (cheeseStructure.square(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > 0) {
   const y = Math.floor(cell.index / tiles.length);
   const x = cell.index % tiles.length;
   cell.solid = (tiles[y][x] != 6);
   cell.pushSprite(new ex.TileSprite('default', tiles[y][x]));
-});
+}
+
+let spriteTiles = new ex.SpriteSheet(tileSheet, 5, 3, 32, 32);
+tm.registerSpriteSheet('default', spriteTiles);
+tm.data.forEach(drawCell);
+
+const eatCheese = (cell: Cell) => {
+  const y = Math.floor(cell.index / 2 / tiles.length);
+  const x = Math.floor(cell.index / 2) % tiles.length;
+  mapdata[y][x] = 0;
+  tiles = getTiles(mapdata);
+  tm.data.forEach(cell => cell.clearSprites());
+  tm.data.forEach(drawCell);
+};
 
 const rectangle = new ex.Actor(150, game.drawHeight - 40, 200, 20);
 rectangle.color = ex.Color.Yellow;
@@ -76,7 +82,7 @@ game.input.pointers.primary.on('move', evt => {
 game.start(loader).then(() => {
   game.add(tm);
 
-  const player = new Player(new Vector(100, 100), mouseTexture);
+  const player = new Player(new Vector(300, 300), mouseTexture, eatCheese);
 
   game.add(player);
 });
