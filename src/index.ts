@@ -1,6 +1,7 @@
 import * as ex from 'excalibur';
 import { Color, Vector } from 'excalibur';
 import { Mold } from './mold';
+import { Player } from './player';
 
 const width = 800;
 const height = 600;
@@ -18,7 +19,8 @@ game.add(new Mold(new Vector(500, 500)));
 game.add(new Mold(new Vector(400, 600)));
 
 const tileSheet = new ex.Texture('/assets/cheese.png');
-const loader = new ex.Loader([tileSheet]);
+const mouseTexture = new ex.Texture('/assets/mouse.png');
+const loader = new ex.Loader([tileSheet, mouseTexture]);
 
 const tm = new ex.TileMap({
   x: 0,
@@ -47,4 +49,8 @@ game.input.pointers.primary.on('move', evt => {
 
 game.start(loader).then(() => {
   game.add(tm);
+
+  const player = new Player(new Vector(100, 100), mouseTexture);
+
+  game.add(player);
 });
