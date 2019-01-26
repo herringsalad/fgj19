@@ -1,7 +1,8 @@
-import {Actor, Color, Texture, Vector} from 'excalibur';
-import { CheeseCell } from './cheeseMap';
-import { Game } from '.';
 import * as ex from 'excalibur';
+import {Actor, CollisionType, EventTypes, Vector} from 'excalibur';
+import {CheeseCell} from './cheeseMap';
+import {Game} from '.';
+import {Player} from "./player";
 
 export const newMold = (game: Game, anim: ex.Animation) => {
   const rand = Math.random();
@@ -31,25 +32,30 @@ export class Mold extends Actor {
     super(pos.x, pos.y, 20, 20);
     this.addDrawing('stock', moldTexture);
     this.target = new Vector(400, 300);
+    this.collisionType = CollisionType.Passive;
     this.speed = speed;
     this.hp = 3;
     this.on('pointerdown', this.onClick.bind(this));
     this.id = Math.random() * 10;
     this.time = 0;
     this.targetMoldiness = this.id > 5 ? 50 : 100;
+    this.on(EventTypes.PreCollision, event => {
+      if (event!.other instanceof Player) {
+        this.kill()
+      }
+    })
   }
 
   update(game: Game, delta: number): void {
     super.update(game, delta);
     if (!this.targetCheese || !this.targetCheese.solid || this.targetCheese.moldiness > this.targetMoldiness) {
-      this.targetCheese = game.findCheese(this.pos,  this.targetMoldiness);
-      if(this.targetCheese) {
-        this.targetCheese = game.findCheese(this.pos,  100);
+      this.targetCheese = game.findCheese(this.pos, this.targetMoldiness);
+      if (this.targetCheese) {
+        this.targetCheese = game.findCheese(this.pos, 100);
       }
 
-      if(this.targetCheese) {
+      if (this.targetCheese) {
         this.target = new Vector(this.targetCheese!.x + 16, this.targetCheese!.y + 16);
-        console.log("updating cheesetarget", (this.targetCheese as any).moldiness);
       }
     }
     if (this.targetCheese) {

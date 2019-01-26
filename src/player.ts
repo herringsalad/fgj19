@@ -149,7 +149,7 @@ export class Player extends Actor {
       this.pos.y + yVelocity * 64
     );
 
-    if (cheese && !cheese.moldiness && cheese.hp > 0) {
+    if (cheese && cheese.moldiness < 50 && cheese.hp > 0) {
       if (yVelocity < 0) {
         this.setDrawing('eatUp');
       }
