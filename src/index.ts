@@ -33,18 +33,19 @@ export class Game extends Engine {
   height = 1080;
 
   assets = {
-    fgTilefile: new Texture('/assets/Kolo tiles.png'),
-    bgTilefile: new Texture('/assets/Tausta tiles.png'),
-    moldTilefile: new Texture('/assets/Home kolo tiles.png'),
+    fgTilefile: new Texture('/assets/images/Kolo tiles.png'),
+    bgTilefile: new Texture('/assets/images/Tausta tiles.png'),
+    moldTilefile: new Texture('/assets/images/Home kolo tiles.png'),
     cheeseParticles: new Texture(
-      '/assets/Particulate cheese sprites (10x10).png'
+      '/assets/images/Particulate cheese sprites (10x10).png'
     ),
-    semimoldTilefile: new Texture('/assets/Semihome kolo tiles.png'),
-    bgFile: new Texture('/assets/Lattia tiles.png'),
-    moldTexture: new Texture('/assets/Itiö sprites (10x10).png'),
-    mouseTexture: new Texture('/assets/Mouse sprites.png'),
-    music: new Sound('/assets/juustoa.ogg'),
-    moldmusic: new Sound('/assets/homejuustoa.ogg')
+    semimoldTilefile: new Texture('/assets/images/Semihome kolo tiles.png'),
+    bgFile: new Texture('/assets/images/Lattia tiles.png'),
+    moldTexture: new Texture('/assets/images/Itiö sprites (10x10).png'),
+    mouseTexture: new Texture('/assets/images/Mouse sprites.png'),
+    music: new Sound('/assets/sounds/juustoa.ogg'),
+    moldmusic: new Sound('/assets/sounds/homejuustoa.ogg'),
+    mouseSqueak: new Sound('assets/sounds/Hiirulainen.wav')
   };
 
   rows = 20;
@@ -154,7 +155,7 @@ export class Game extends Engine {
       this.scoreLabel = new Label('Hello world', -10, -10, '10px Arial');
       this.add(this.scoreLabel);
 
-      const player = new Player(new Vector(300, 300), this.assets.mouseTexture);
+      const player = new Player(new Vector(300, 300), this.assets.mouseTexture, this.assets.mouseSqueak);
       game.currentScene.camera.strategy.lockToActor(player);
 
       this.add(player);

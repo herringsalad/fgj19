@@ -11,7 +11,8 @@ import {
   Sprite,
   SpriteSheet,
   PolygonArea,
-  EventTypes
+  EventTypes,
+  Sound
 } from 'excalibur';
 
 import { Game } from './';
@@ -22,8 +23,9 @@ export class Player extends Actor {
   biteSize: number;
   speed = 256;
   spriteSheet: SpriteSheet;
+  squeak: Sound;
 
-  constructor(initPos: Vector, texture: Texture) {
+  constructor(initPos: Vector, texture: Texture, squeak: Sound) {
     super(initPos.x, initPos.y, 40, 40);
 
     this.texture = texture;
@@ -33,6 +35,7 @@ export class Player extends Actor {
     // make player hitbox smaller
     // this.setWidth(this.getWidth() * 0.2);
     // this.setHeight(this.getHeight() * 0.2);
+    this.squeak = squeak;
   }
 
   onInitialize(game: Engine) {
@@ -119,6 +122,11 @@ export class Player extends Actor {
     this.addDrawing('eatUp', eatUp);
 
     this.setDrawing('idleRight');
+
+    // sounds
+    // mouse squeak
+    this.squeak.loop = true;
+    this.squeak.play(.1);
   }
 
   maybeEat(engine: Game, delta: number, xVelocity: number, yVelocity: number) {
