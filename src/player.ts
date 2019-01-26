@@ -152,8 +152,6 @@ export class Player extends Actor {
     let xVelocity = 0;
     let yVelocity = 0;
 
-    console.log(this.pos.x, this.pos.y);
-
     if (engine.input.keyboard.isHeld(Input.Keys.Up) && this.pos.y > 65) {
       yVelocity -= 1;
     }
