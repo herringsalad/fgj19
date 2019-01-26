@@ -162,8 +162,17 @@ export class Game extends Engine {
 
       this.add(player);
 
+      const particleSprite = new SpriteSheet(
+        this.assets.cheeseParticles,
+        1,
+        3,
+        10,
+        10
+      );
+
       this.particleEmitter = new ParticleEmitter({
         startSize: 1,
+        endSize: 0.5,
         randomRotation: true,
         maxVel: 20,
         maxAngle: Math.PI * 2,
@@ -176,14 +185,12 @@ export class Game extends Engine {
         isEmitting: false
       });
 
-      const particleSprite = new SpriteSheet(
-        this.assets.cheeseParticles,
-        1,
-        3,
-        10,
-        10
+      // @ts-ignore: this works fine ¯\_(ツ)_/¯
+      this.particleEmitter.particleSprite = particleSprite.getAnimationForAll(
+        game,
+        250
       );
-      this.particleEmitter.particleSprite = particleSprite.sprites[0];
+
       this.add(this.particleEmitter);
 
       // Start game
