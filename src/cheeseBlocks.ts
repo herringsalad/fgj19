@@ -63,6 +63,10 @@ export class CheeseMap extends TileMap {
     });
     return targetCheese;
   }
+
+  hasCheese() {
+    return this.data.some(cheese => cheese.solid);
+  }
 }
 
 export class CheeseTileSprite extends TileSprite {

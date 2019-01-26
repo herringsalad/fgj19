@@ -12,13 +12,6 @@ const height = 1080;
 
 const game = new ex.Engine({width, height});
 
-for (let i = 0; i < Math.max(width / 64, height / 64); i++) {
-  const col = new ex.Actor(i * 64, 0, 1, height * 2, Color.White);
-  game.add(col);
-  const row = new ex.Actor(0, i * 64, width * 2, 1, Color.White);
-  game.add(row);
-}
-
 const findCheese = (mold: Mold) => {
   return tm.findCheese(mold.pos);
 };
@@ -59,7 +52,7 @@ let timer = 0;
 
 game.on(EventTypes.PostUpdate, event => {
   timer += event.delta;
-  if (timer > 2000) {
+  if (timer > 2000 && tm.hasCheese()) {
     timer = 0;
     newMold();
   }
