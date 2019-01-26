@@ -59,6 +59,7 @@ export class Mold extends Actor {
 
   onPreKill() {
     this.killSound.play(.2);
+    this.partySound.stop();
   }
 
   update(game: Game, delta: number): void {

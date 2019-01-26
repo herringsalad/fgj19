@@ -1,22 +1,6 @@
-import {
-  Actor,
-  Cell,
-  CircleArea,
-  CollisionType,
-  Color,
-  Engine,
-  Input,
-  Texture,
-  Vector,
-  Sprite,
-  SpriteSheet,
-  PolygonArea,
-  EventTypes,
-  Sound
-} from 'excalibur';
+import {Actor, CollisionType, Engine, Input, Sound, SpriteSheet, Texture, Vector} from 'excalibur';
 
-import { Game } from './';
-import { CheeseMap } from './cheeseMap';
+import {Game} from './';
 
 type Direction = 'Up' | 'Down' | 'Left' | 'Right';
 
@@ -289,6 +273,12 @@ export class Player extends Actor {
       if (xVelocity > 0) {
         this.setDrawing(didEat ? 'eatRight' : 'walkRight');
       }
+
+      if (!didEat) {
+        this.eatSound.stop();
+      }
+    } else {
+      this.eatSound.stop();
     }
   }
 }

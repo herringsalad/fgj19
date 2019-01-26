@@ -164,9 +164,9 @@ export class Game extends Engine {
 
       const scoreBg = new Actor(-150, -125, width, 20);
       scoreBg.color = Color.Black;
-      this.scoreLabel = new Label('Hello world', 0, 5, 'monospace');
+      this.scoreLabel = new Label('', 0, 5, 'monospace');
       this.scoreLabel.color = Color.White;
-      this.moldLabel = new Label('Hello world', 100, 5, 'monospace');
+      this.moldLabel = new Label('', 100, 5, 'monospace');
       this.moldLabel.color = Color.White;
 
       const player = new Player(
