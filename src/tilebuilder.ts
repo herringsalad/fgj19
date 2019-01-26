@@ -72,8 +72,8 @@ function getMagic(
 // for a x,y map data (in col-first order), get 2x,2y tilemap with correct borders
 // Out of bounds is empty.
 export function getTiles(tilemap: boolean[][]): number[][] {
-  const out = [];
-  const tmp = [];
+  const out: number[][] = [];
+  const tmp: boolean[][] = [];
   for (let col = 0; col < tilemap.length; col++) {
     tmp[col * 2] = [];
     tmp[col * 2 + 1] = [];

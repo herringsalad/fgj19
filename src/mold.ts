@@ -1,20 +1,32 @@
-import { Actor, Color, Engine, Vector } from 'excalibur';
-import { CheeseCell } from './cheeseBlocks';
+import { Actor, Color, Vector } from 'excalibur';
+import { CheeseCell } from './cheeseMap';
+import { Game } from '.';
+
+export const newMold = (game: Game) => {
+  const rand = Math.random();
+  let pos: Vector;
+  if (rand < 0.25) {
+    pos = new Vector(-game.width / 2, Math.random() * game.height);
+  } else if (rand < 0.5) {
+    pos = new Vector(game.width * 1.5, Math.random() * game.height);
+  } else if (rand < 0.75) {
+    pos = new Vector(Math.random() * game.width, -game.height / 2);
+  } else {
+    pos = new Vector(Math.random() * game.width, game.height * 1.5);
+  }
+  game.add(new Mold(pos, Math.random() * 10 + 50));
+};
 
 export class Mold extends Actor {
   target: Vector;
-  targetCheese: CheeseCell;
+  targetCheese: CheeseCell | undefined;
   speed: number;
   hp: number;
   id: number;
   time: number;
-  findCheese: (pos: Vector) => CheeseCell;
+  findCheese: (pos: Vector) => CheeseCell | undefined;
 
-  constructor(
-    pos: Vector,
-    findCheese: (pos: Vector) => CheeseCell,
-    speed: number = 50
-  ) {
+  constructor(pos: Vector, speed: number = 50) {
     super(pos.x, pos.y, 20, 20);
     this.color = Color.Blue;
     this.target = new Vector(400, 300);
@@ -23,26 +35,28 @@ export class Mold extends Actor {
     this.on('pointerdown', this.onClick.bind(this));
     this.id = Math.random() * 10;
     this.time = 0;
-    this.findCheese = findCheese;
   }
 
-  update(engine: Engine, delta: number): void {
-    super.update(engine, delta);
+  update(game: Game, delta: number): void {
+    super.update(game, delta);
+    const targetCheese = game.findCheese(this.pos);
     if (!this.targetCheese) {
       this.targetCheese = this.findCheese(this.pos);
       console.log("updating cheesetarget");
     }
-    if (this.targetCheese.hp === 0) {
+    if (this.targetCheese && this.targetCheese.hp === 0) {
       console.log("updating cheesetarget");
       this.targetCheese = this.findCheese(this.pos);
-      this.target = new Vector(this.targetCheese.x + 16, this.targetCheese.y + 16);
+      this.target = new Vector(this.targetCheese!.x + 16, this.targetCheese!.y + 16);
     } 
-    if (this.targetCheese) {
+    if (targetCheese) {
+      this.target = new Vector(targetCheese.x + 16, targetCheese.y + 16);
+
       const direction = this.target.sub(this.pos);
 
       this.vel = direction.normalize().scale(this.speed);
       this.time += delta;
-      if (this.target.sub(this.pos).magnitude() < 40) {
+      if (this.targetCheese && this.target.sub(this.pos).magnitude() < 40) {
         this.targetCheese.mold();
       }
     } else {

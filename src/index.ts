@@ -1,11 +1,15 @@
 import * as ex from 'excalibur';
-import {Cell, EventTypes, PostUpdateEvent, Vector} from 'excalibur';
-import { Mold } from './mold';
+import {
+  Cell,
+  PostUpdateEvent,
+  EventTypes,
+  Vector,
+  Engine,
+  DisplayMode
+} from 'excalibur';
+import { Mold, newMold } from './mold';
 import { Player } from './player';
-import { TileMapCollisionDetection } from 'excalibur/dist/Traits/Index';
-import * as cheeseStructure from './cheeseBuilder';
-import { getTiles } from './tilebuilder';
-import { CheeseCell, CheeseMap } from './cheeseBlocks';
+import { CheeseMap } from './cheeseMap';
 
 const width = 1280;
 const height = 1080;
@@ -13,154 +17,109 @@ const height = 1080;
 const moldmusicvol = 0.7;
 const musicvol = 1;
 
-const game = new ex.Engine({width, height});
+export class Game extends Engine {
+  width = 1280;
+  height = 1080;
 
-const findCheese = (pos: Vector) => {
-  return tm.findCheese(pos);
-};
+  assets = {
+    fgTilefile: new ex.Texture('/assets/Kolo tiles.png'),
+    bgTilefile: new ex.Texture('/assets/Tausta tiles.png'),
+    moldTilefile: new ex.Texture('/assets/Tausta tiles.png'),
+    mouseTexture: new ex.Texture('/assets/mouse.png'),
+    music: new ex.Sound('/assets/juustoa.ogg'),
+    moldmusic: new ex.Sound('/assets/homejuustoa.ogg')
+  };
 
-const newMold = () => {
-  const rand = Math.random();
-  let pos: Vector;
-  if (rand < 0.25) {
-    pos = new Vector(-width / 2, Math.random() * height);
-  } else if (rand < 0.5) {
-    pos = new Vector(width * 1.5, Math.random() * height);
-  } else if (rand < 0.75) {
-    pos = new Vector(Math.random() * width, -height / 2);
-  } else {
-    pos = new Vector(Math.random() * width, height * 1.5);
+  rows = 20;
+  cols = 20;
+  tileMap: CheeseMap;
+  timer: number;
+  moldcount = 0;
+
+  constructor() {
+    super({
+      width: width,
+      height: height,
+      displayMode: DisplayMode.FullScreen
+    });
   }
-  game.add(new Mold(pos, findCheese, Math.random() * 10 + 50));
-};
 
-function drawCell(cell: CheeseCell) {
-  const y = Math.floor(cell.index / fgTiles.length);
-  const x = cell.index % fgTiles.length;
-  cell.solid = fgTiles[y][x] != 6;
-  cell.pushSprite(new ex.TileSprite('background', bgTiles[y][x]));
-  cell.pushSprite(new ex.TileSprite('default', fgTiles[y][x]));
-  cell.pushSprite(new ex.TileSprite('background', moldTiles[y][x]));
-}
-
-const eatCheese = (cell: CheeseCell) => {
-  const y = cell.dataY;
-  const x = cell.dataX;
-  cell.solid = false;
-  mapdata[y][x] = false;
-  fgTiles = getTiles(mapdata);
-  tm.data.forEach(cell => cell.clearSprites());
-  tm.data.forEach(drawCell);
-};
-
-const moldCheese = (cell: CheeseCell) => {
-  const y = cell.dataY;
-  const x = cell.dataX;
-  moldData[y][x] = true;
-  moldTiles = getTiles(moldData);
-  tm.data.forEach(cell => cell.clearSprites());
-  tm.data.forEach(drawCell);
-};
-
-let timer = 0;
-let moldcount = 0;
-
-const modVolume = (event: PostUpdateEvent) => {
-  console.log(moldmusic.volume, music.volume);
-  moldmusic.volume = Math.min(moldmusicvol, moldmusic.volume + event.delta / 4000);
-  music.volume = Math.max(0, music.volume - event.delta / 4000);
-  if(moldmusic.volume < moldmusicvol - 0.01 || music.volume > 0) {
-    game.once(EventTypes.PostUpdate, modVolume)
-  }
-};
-
-game.on(EventTypes.PostUpdate, event => {
-  timer += event.delta;
-  if (timer > 2000 && tm.hasCheese()) {
-    timer = 0;
-    moldcount += 1;
-    if (moldcount == 10) {
-      game.once(EventTypes.PostUpdate, modVolume);
+  modVolume = (event: PostUpdateEvent) => {
+    console.log(this.assets.moldmusic.volume, this.assets.music.volume);
+    this.assets.moldmusic.volume = Math.min(
+      moldmusicvol,
+      this.assets.moldmusic.volume + event.delta / 4000
+    );
+    this.assets.music.volume = Math.max(
+      0,
+      this.assets.music.volume - event.delta / 4000
+    );
+    if (
+      this.assets.moldmusic.volume < moldmusicvol - 0.01 ||
+      this.assets.music.volume > 0
+    ) {
+      game.once(EventTypes.PostUpdate, this.modVolume);
     }
-    newMold();
-  }
-});
+  };
 
-const fgTilefile = new ex.Texture('/assets/Kolo tiles.png');
-const bgTilefile = new ex.Texture('/assets/Tausta tiles.png');
-const moldTilefile = new ex.Texture('/assets/Tausta tiles.png');
-const mouseTexture = new ex.Texture('/assets/mouse.png');
+  findCheese = (pos: Vector) => {
+    return this.tileMap.findCheese(pos);
+  };
 
-const music = new ex.Sound('/assets/juustoa.ogg');
-const moldmusic = new ex.Sound('/assets/homejuustoa.ogg');
+  start() {
+    this.timer = 0;
 
-const loader = new ex.Loader([fgTilefile, bgTilefile, mouseTexture, music, moldmusic]);
-const tileMapCollision = new TileMapCollisionDetection();
-const rows = 20;
-const cols = 20;
+    this.assets.music.volume = musicvol;
+    this.assets.moldmusic.volume = 0;
 
-const cheeseCenter = new Vector(Math.floor(rows / 2), Math.floor(cols / 2));
-const cheeseMaxRadius = 5;
-const maxDistance = new Vector(cheeseMaxRadius, cheeseMaxRadius).magnitude();
+    game.on(EventTypes.PostUpdate, event => {
+      if (!event) return;
 
-const tm = new CheeseMap(
-  {
-    x: 0,
-    y: 0,
-    cellWidth: 32,
-    cellHeight: 32,
-    rows: rows * 2,
-    cols: cols * 2
-  },
-  eatCheese,
-  moldCheese
-);
+      this.timer += event.delta;
+      if (this.timer > 2000 && this.tileMap.hasCheese()) {
+        this.timer = 0;
+        this.moldcount += 1;
+        if (this.moldcount == 10) {
+          game.once(EventTypes.PostUpdate, this.modVolume);
+        }
+        newMold(this);
+      }
+    });
 
-const mapdata: boolean[][] = [];
-const moldData: boolean[][] = [];
-const background: boolean[][] = [];
-for (let col = 0; col < cols; col++) {
-  mapdata[col] = [];
-  moldData[col] = [];
-  background[col] = [];
-  for (let row = 0; row < cols; row++) {
-    const distance =
-      cheeseCenter.sub(new Vector(row, col)).magnitude() > maxDistance ? 1 : 0;
-    mapdata[col][row] =
-      cheeseStructure.perlin(new Vector(row * 2, col * 2).scale(1 / 64)) -
-        distance >
-      0.5;
-    background[col][row] = !distance;
-    moldData[col][row] = false;
+    this.tileMap = new CheeseMap(this, {
+      x: 0,
+      y: 0,
+      cellWidth: 32,
+      cellHeight: 32,
+      rows: this.rows * 2,
+      cols: this.cols * 2
+    });
+
+    this.add(this.tileMap);
+
+    const player = new Player(
+      new Vector(300, 300),
+      this.assets.mouseTexture,
+      this.tileMap.eatCheese,
+      this.tileMap
+    );
+    game.currentScene.camera.strategy.lockToActor(player);
+
+    this.add(player);
+    // Loads all assets
+    const loader = new ex.Loader([
+      ...Object.keys(this.assets).map(textureName => this.assets[textureName])
+    ]);
+
+    // Start game
+    return super.start(loader).then(() => {
+      this.assets.music.play();
+      this.assets.moldmusic.play();
+      this.assets.music.loop = true;
+      this.assets.moldmusic.loop = true;
+    });
   }
 }
 
-let fgTiles = getTiles(mapdata);
-let bgTiles = getTiles(background);
-let moldTiles = getTiles(moldData);
-
-let fgTilesheet = new ex.SpriteSheet(fgTilefile, 5, 3, 32, 32);
-tm.registerSpriteSheet('default', fgTilesheet);
-let bgTilesheet = new ex.SpriteSheet(bgTilefile, 5, 3, 32, 32);
-tm.registerSpriteSheet('background', bgTilesheet);
-let moldTilesheet = new ex.SpriteSheet(moldTilefile, 5, 3, 32, 32);
-tm.registerSpriteSheet('mold', moldTilesheet);
-
-tm.data.forEach(drawCell);
-
-music.volume = musicvol;
-moldmusic.volume = 0;
-
-game.start(loader).then(() => {
-  game.add(tm);
-
-  music.play();
-  moldmusic.play();
-  music.loop = true;
-  moldmusic.loop = true;
-
-  const player = new Player(new Vector(300, 300), mouseTexture, eatCheese);
-  game.currentScene.camera.strategy.lockToActor(player);
-
-  game.add(player);
-});
+const game = new Game();
+game.start();

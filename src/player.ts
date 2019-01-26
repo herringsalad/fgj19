@@ -6,12 +6,12 @@ import {
   Color,
   Engine,
   Input,
-  Polygon,
   Texture,
   Vector
 } from 'excalibur';
 
-import { CheeseCell } from './cheeseBlocks';
+import { Game } from './';
+import { CheeseMap } from './cheeseMap';
 
 export class Player extends Actor {
   texture: Texture;
@@ -22,7 +22,8 @@ export class Player extends Actor {
   constructor(
     initPos: Vector,
     texture: Texture,
-    eatCheese: (cell: Cell) => void
+    eatCheese: (cell: Cell) => void,
+    tm: CheeseMap
   ) {
     super(initPos.x, initPos.y, 40, 40);
 
@@ -41,23 +42,31 @@ export class Player extends Actor {
     this.addDrawing('mouse', this.texture.asSprite());
   }
 
-  maybeEat(
-    engine: Engine,
-    xVelocity: number,
-    yVelocity: number,
-    dx: number,
-    dy: number
-  ) {
+  maybeEat(engine: Game, xVelocity: number, yVelocity: number) {
     // try finding nearby cell in movement dir
+
+    if (xVelocity && yVelocity) return;
+
+    const cheese = engine.tileMap.cheeseAt(
+      this.pos.x + xVelocity * 32,
+      this.pos.y + yVelocity * 32
+    );
+
+    if (cheese) {
+      cheese.consume(1);
+    }
+
+    /*
     const cell: CheeseCell = engine.currentScene.tileMaps[0].getCellByPoint(
-      this.pos.x + dx + 20 + xVelocity * 32,
-      this.pos.y + dy - 20 + yVelocity * 32
+      this.pos.x + xVelocity * 32,
+      this.pos.y + yVelocity * 32
     ) as CheeseCell;
 
     // if solid cell found, dinner time :-)
     if (cell && cell.solid && cell.moldiness < 100) {
       this.eatCheese(cell);
     }
+    */
   }
 
   draw(ctx: CanvasRenderingContext2D, delta: number) {
@@ -67,7 +76,7 @@ export class Player extends Actor {
     this.getBounds().debugDraw(ctx, Color.fromRGB(0,255,0,.5));
   }
 
-  update(engine: Engine, delta: number) {
+  update(engine: Game, delta: number) {
     super.update(engine, delta);
 
     let xVelocity = 0;
@@ -82,9 +91,6 @@ export class Player extends Actor {
     this.vel.x = xVelocity * this.speed;
     this.vel.y = yVelocity * this.speed;
 
-    this.maybeEat(engine, xVelocity, yVelocity, -20, -20);
-    this.maybeEat(engine, xVelocity, yVelocity, 20, -20);
-    this.maybeEat(engine, xVelocity, yVelocity, -20, 20);
-    this.maybeEat(engine, xVelocity, yVelocity, 20, 20);
+    this.maybeEat(engine, xVelocity, yVelocity);
   }
 }
