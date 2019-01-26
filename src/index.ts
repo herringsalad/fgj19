@@ -16,8 +16,8 @@ import { newMold } from './mold';
 import { Player } from './player';
 import { CheeseMap } from './cheeseMap';
 
-const width = 1280;
-const height = 1080;
+const width = 1280/2;
+const height = 1080/2;
 
 /*
 const moldmusicvol = 0; // 0.7;
@@ -29,8 +29,8 @@ const musicvol = 1;
 //*/
 
 export class Game extends Engine {
-  width = 1280;
-  height = 1080;
+  width = width;
+  height = height;
 
   assets = {
     fgTilefile: new Texture('/assets/images/Kolo tiles.png'),
