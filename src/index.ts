@@ -1,5 +1,5 @@
 import * as ex from 'excalibur';
-import {Cell, Color, EventTypes, Vector} from 'excalibur';
+import {EventTypes, Vector} from 'excalibur';
 import {Mold} from './mold';
 import {Player} from './player';
 import {TileMapCollisionDetection} from 'excalibur/dist/Traits/Index';
@@ -62,8 +62,12 @@ const tileSheet = new ex.Texture('/assets/Kolo tiles.png');
 const mouseTexture = new ex.Texture('/assets/mouse.png');
 const loader = new ex.Loader([tileSheet, mouseTexture]);
 const tileMapCollision = new TileMapCollisionDetection();
-const rows = 8;
-const cols = 12;
+const rows = 40;
+const cols = 40;
+
+const cheeseCenter = new Vector(Math.floor(rows/2), Math.floor(cols/2));
+const cheeseMaxRadius = 5;
+const maxDistance = new Vector(cheeseMaxRadius, cheeseMaxRadius).magnitude();
 
 const tm = new CheeseMap({
   x: 0,
@@ -78,8 +82,13 @@ const mapdata: boolean[][] = [];
 for (let col = 0; col < cols; col++) {
   mapdata[col] = [];
   for (let row = 0; row < cols; row++) {
+    const distance = cheeseCenter.sub(new Vector(row, col)).magnitude() > maxDistance ? 1 : 0;
     mapdata[col][row] =
-      cheeseStructure.perlin(new Vector(row * 2, col * 2).scale(1 / 64)) > 0.6;
+      cheeseStructure
+        .perlin(new Vector(row * 2, col * 2)
+          .scale(1 / 64))
+      - distance
+      > 0.5;
   }
 }
 

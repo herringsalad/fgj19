@@ -17,7 +17,8 @@ import { CheeseCell } from './cheeseBlocks';
 export class Player extends Actor {
   texture: Texture;
   eatCheese: (cell: Cell) => void;
-  biteSize: number;
+  biteSize: number
+  speed = 256;
 
   constructor(
     initPos: Vector,
@@ -77,8 +78,8 @@ export class Player extends Actor {
     if (engine.input.keyboard.isHeld(Input.Keys.Down)) yVelocity += 1;
 
     // set player movement speed
-    this.vel.x = xVelocity * 128;
-    this.vel.y = yVelocity * 128;
+    this.vel.x = xVelocity * this.speed;
+    this.vel.y = yVelocity * this.speed;
 
     this.maybeEat(engine, xVelocity, yVelocity, -20, -20);
     this.maybeEat(engine, xVelocity, yVelocity, 20, -20);
