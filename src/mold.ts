@@ -24,7 +24,7 @@ export class Mold extends Actor {
   hp: number;
   id: number;
   time: number;
-  findCheese: (pos: Vector) => CheeseCell | undefined;
+  targetMoldiness: number;
 
   constructor(pos: Vector, speed: number = 50) {
     super(pos.x, pos.y, 20, 20);
@@ -35,19 +35,16 @@ export class Mold extends Actor {
     this.on('pointerdown', this.onClick.bind(this));
     this.id = Math.random() * 10;
     this.time = 0;
+    this.targetMoldiness = this.id > 5 ? 50 : 100;
   }
 
   update(game: Game, delta: number): void {
     super.update(game, delta);
-    if (!this.targetCheese || !this.targetCheese.solid || this.targetCheese.moldiness > 100) {
-      this.targetCheese = game.findCheese(this.pos);
-      console.log("updating cheesetarget");
-    }
-    if (this.targetCheese && this.targetCheese.hp === 0) {
-      console.log("updating cheesetarget");
-      this.targetCheese = this.findCheese(this.pos);
+    if (!this.targetCheese || !this.targetCheese.solid || this.targetCheese.moldiness > this.targetMoldiness) {
+      this.targetCheese = game.findCheese(this.pos,  this.targetMoldiness);
       this.target = new Vector(this.targetCheese!.x + 16, this.targetCheese!.y + 16);
-    } 
+      console.log("updating cheesetarget", (this.targetCheese as any).moldiness);
+    }
     if (this.targetCheese) {
       this.target = new Vector(this.targetCheese.x + 16, this.targetCheese.y + 16);
 
@@ -58,17 +55,13 @@ export class Mold extends Actor {
       if (this.targetCheese && this.target.sub(this.pos).magnitude() < 40) {
         this.targetCheese.mold();
       }
-    } else {
-      this.vel = new Vector(Math.random() - 0.5, Math.random() - 0.5)
-        .normalize()
-        .scale(this.speed);
+      this.vel.addEqual(
+        this.vel
+          .perpendicular()
+          .scale(Math.sin(this.time / 1000 + this.id))
+          .scale(1 / 3)
+      );
     }
-    this.vel.addEqual(
-      this.vel
-        .perpendicular()
-        .scale(Math.sin(this.time / 1000 + this.id))
-        .scale(1 / 3)
-    );
   }
 
   onClick(evt) {

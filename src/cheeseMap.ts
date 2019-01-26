@@ -41,6 +41,9 @@ export class CheeseCell extends Cell {
   }
   mold() {
     this.moldiness += 1;
+    if (this.moldiness == 50) {
+      this.moldCheese(this);
+    }
     if (this.moldiness == 100) {
       this.game.tileMap.moldCheese(this);
     }
@@ -53,8 +56,10 @@ export class CheeseMap extends TileMap {
   fgTiles: number[][];
   bgTiles: number[][];
   moldTiles: number[][];
+  semimoldTiles: number[][];
   mapdata: boolean[][];
   moldData: boolean[][];
+  semimoldData: boolean[][];
   background: boolean[][];
 
   constructor(game: Game, config: ITileMapArgs) {
@@ -74,6 +79,14 @@ export class CheeseMap extends TileMap {
       32
     );
     this.registerSpriteSheet('mold', moldTilesheet);
+    const semimoldTilesheet = new SpriteSheet(
+      engine.assets.semimoldTilefile,
+      5,
+      3,
+      32,
+      32
+    );
+    this.registerSpriteSheet('semimold', semimoldTilesheet);
 
     const cheeseCenter = new Vector(
       Math.floor(config.rows / 4),
@@ -87,11 +100,13 @@ export class CheeseMap extends TileMap {
 
     this.mapdata = [];
     this.moldData = [];
+    this.semimoldData = [];
     this.background = [];
 
     for (let col = 0; col < config.cols / 2; col++) {
       this.mapdata[col] = [];
       this.moldData[col] = [];
+      this.semimoldData[col] = [];
       this.background[col] = [];
       for (let row = 0; row < config.cols / 2; row++) {
         const distance =
@@ -104,12 +119,14 @@ export class CheeseMap extends TileMap {
           0.5;
         this.background[col][row] = !distance;
         this.moldData[col][row] = false;
+        this.semimoldData[col][row] = false;
       }
     }
 
     this.fgTiles = getTiles(this.mapdata);
     this.bgTiles = getTiles(this.background);
     this.moldTiles = getTiles(this.moldData);
+    this.semimoldTiles = getTiles(this.moldData);
 
     this.config = config;
     this.data = new Array<CheeseCell>(config.rows * config.cols);
@@ -144,6 +161,7 @@ export class CheeseMap extends TileMap {
     //console.log(this.moldTiles[y][x])
     cell.pushSprite(new TileSprite('background', this.bgTiles[y][x]));
     cell.pushSprite(new TileSprite('default', this.fgTiles[y][x]));
+    cell.pushSprite(new TileSprite('semimold', this.semimoldTiles[y][x]));
     cell.pushSprite(new TileSprite('mold', this.moldTiles[y][x]));
   };
 
@@ -160,8 +178,13 @@ export class CheeseMap extends TileMap {
   moldCheese = (cell: CheeseCell) => {
     const y = cell.dataY;
     const x = cell.dataX;
-    this.moldData[y][x] = true;
+    if (this.semimoldData[y][x]) {
+      this.moldData[y][x] = true;
+    } else {
+      this.semimoldData[y][x] = true;
+    }
     this.moldTiles = getTiles(this.moldData);
+    this.semimoldTiles = getTiles(this.semimoldData);
     this.data.forEach(cell => cell.clearSprites());
     this.data.forEach(this.drawCell);
   };
@@ -176,19 +199,29 @@ export class CheeseMap extends TileMap {
     }
   };
 
-  findCheese = (pos: Vector): CheeseCell | undefined => {
-    let max_pos = new Vector(1 / 0, 1 / 0);
+  findCheese = (pos: Vector, maxMold: number): CheeseCell | undefined => {
+    let best_pos = new Vector(1 / 0, 1 / 0).magnitude();
+    let max_pos = new Vector(1 / 0, 1 / 0).magnitude();
     let targetCheese: CheeseCell | undefined = undefined;
     this.data.forEach(cheese => {
       const distance = new Vector(cheese.x + 8, cheese.y + 8);
       distance.subEqual(pos);
       if (
+        cheese.index % 2 == 0
+        && Math.floor(cheese.index/this.config.cols) % 2 == 0 &&
         cheese.solid &&
-        cheese.moldiness < 100 &&
-        distance.magnitude() < max_pos.magnitude()
+        cheese.moldiness < maxMold
       ) {
-        max_pos = distance;
-        targetCheese = cheese;
+        let dist = distance.magnitude();
+        let delta = dist - max_pos;
+        if(delta < 0) {
+          max_pos = distance.magnitude();
+          best_pos = distance.magnitude();
+          targetCheese = cheese;
+        } else if (dist - best_pos < 20 && Math.random() > 0.5) {
+          max_pos = distance.magnitude();
+          targetCheese = cheese;
+        }
       }
     });
     return targetCheese;

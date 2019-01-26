@@ -25,6 +25,7 @@ export class Game extends Engine {
     fgTilefile: new ex.Texture('/assets/Kolo tiles.png'),
     bgTilefile: new ex.Texture('/assets/Tausta tiles.png'),
     moldTilefile: new ex.Texture('/assets/Home kolo tiles.png'),
+    semimoldTilefile: new ex.Texture('/assets/Semihome kolo tiles.png'),
     mouseTexture: new ex.Texture('/assets/mouse.png'),
     music: new ex.Sound('/assets/juustoa.ogg'),
     moldmusic: new ex.Sound('/assets/homejuustoa.ogg')
@@ -62,8 +63,8 @@ export class Game extends Engine {
     }
   };
 
-  findCheese = (pos: Vector) => {
-    return this.tileMap.findCheese(pos);
+  findCheese = (pos: Vector, maxMold: number) => {
+    return this.tileMap.findCheese(pos, maxMold);
   };
 
   addScore = (points: number) => {
