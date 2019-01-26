@@ -14,8 +14,8 @@ import { CheeseMap } from './cheeseMap';
 const width = 1280;
 const height = 1080;
 
-const moldmusicvol = 0 // 0.7;
-const musicvol = 0 //1;
+const moldmusicvol = 0; // 0.7;
+const musicvol = 0; //1;
 
 export class Game extends Engine {
   width = 1280;
@@ -35,12 +35,12 @@ export class Game extends Engine {
   tileMap: CheeseMap;
   timer: number;
   moldcount = 0;
+  score = 0;
 
   constructor() {
     super({
       width: width,
-      height: height,
-      displayMode: DisplayMode.FullScreen
+      height: height
     });
   }
 
@@ -66,8 +66,13 @@ export class Game extends Engine {
     return this.tileMap.findCheese(pos);
   };
 
+  addScore = (points: number) => {
+    this.score += points;
+  };
+
   start() {
     this.timer = 0;
+    this.score = 0;
 
     this.assets.music.volume = musicvol;
     this.assets.moldmusic.volume = 0;

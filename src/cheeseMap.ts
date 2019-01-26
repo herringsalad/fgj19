@@ -18,38 +18,31 @@ export class CheeseCell extends Cell {
   dataY: number;
   tileX: number;
   tileY: number;
-  eatCheese: (cell: Cell) => void;
-  moldCheese: (cell: Cell) => void;
+  game: Game;
 
-  constructor(
-    config: ICellArgs,
-    x: number,
-    y: number,
-    hp = 100,
-    eatCheese: (cell: Cell) => void,
-    moldCheese: (cell: CheeseCell) => void
-  ) {
+  constructor(game: Game, config: ICellArgs, x: number, y: number, hp = 100) {
     super({ sprites: [], ...config });
+    this.game = game;
     this.hp = hp;
     this.moldiness = 0;
-    this.eatCheese = eatCheese;
-    this.moldCheese = moldCheese;
     this.tileX = x;
     this.tileY = y;
-    this.dataX = Math.floor(x/2);
-    this.dataY = Math.floor(y/2);
+    this.dataX = Math.floor(x / 2);
+    this.dataY = Math.floor(y / 2);
   }
 
   consume(biteSize: number) {
     this.hp -= biteSize;
+    this.game.addScore(biteSize);
+
     if (this.hp < 0) {
-      this.eatCheese(this);
+      this.game.tileMap.eatCheese(this);
     }
   }
   mold() {
     this.moldiness += 1;
     if (this.moldiness == 100) {
-      this.moldCheese(this);
+      this.game.tileMap.moldCheese(this);
     }
   }
 }
@@ -64,29 +57,17 @@ export class CheeseMap extends TileMap {
   moldData: boolean[][];
   background: boolean[][];
 
-  constructor(engine: Game, config: ITileMapArgs) {
+  constructor(game: Game, config: ITileMapArgs) {
     super(config);
 
     this.drawCell = this.drawCell.bind(this);
 
-    const fgTilesheet = new SpriteSheet(
-      engine.assets.fgTilefile,
-      5,
-      3,
-      32,
-      32
-    );
+    const fgTilesheet = new SpriteSheet(game.assets.fgTilefile, 5, 3, 32, 32);
     this.registerSpriteSheet('default', fgTilesheet);
-    const bgTilesheet = new SpriteSheet(
-      engine.assets.bgTilefile,
-      5,
-      3,
-      32,
-      32
-    );
+    const bgTilesheet = new SpriteSheet(game.assets.bgTilefile, 5, 3, 32, 32);
     this.registerSpriteSheet('background', bgTilesheet);
     const moldTilesheet = new SpriteSheet(
-      engine.assets.moldTilefile,
+      game.assets.moldTilefile,
       5,
       3,
       32,
@@ -108,18 +89,19 @@ export class CheeseMap extends TileMap {
     this.moldData = [];
     this.background = [];
 
-    for (let col = 0; col < config.cols/2; col++) {
+    for (let col = 0; col < config.cols / 2; col++) {
       this.mapdata[col] = [];
       this.moldData[col] = [];
       this.background[col] = [];
-      for (let row = 0; row < config.cols/2; row++) {
+      for (let row = 0; row < config.cols / 2; row++) {
         const distance =
           cheeseCenter.sub(new Vector(row, col)).magnitude() > maxDistance
             ? 1
             : 0;
         this.mapdata[col][row] =
           cheeseStructure.perlin(new Vector(row, col).scale(1 / 64)) -
-            distance > 0.5;
+            distance >
+          0.5;
         this.background[col][row] = !distance;
         this.moldData[col][row] = false;
       }
@@ -135,6 +117,7 @@ export class CheeseMap extends TileMap {
       for (let j = 0; j < config.rows; j++) {
         (() => {
           let cd = new CheeseCell(
+            game,
             {
               x: i * config.cellWidth + config.x,
               y: j * config.cellHeight + config.y,
@@ -144,9 +127,7 @@ export class CheeseMap extends TileMap {
             },
             i,
             j,
-            100,
-            this.eatCheese,
-            this.moldCheese
+            100
           );
           this.data[i + j * config.cols] = cd;
         })();
@@ -189,7 +170,9 @@ export class CheeseMap extends TileMap {
     const cell = this.getCellByPoint(x, y);
 
     if (cell) {
-      return this.data[cell.y + cell.x * this.config.cols];
+      return this.data[
+        cell.x / cell.width + (cell.y / cell.height) * this.config.rows
+      ];
     }
   };
 
@@ -213,7 +196,7 @@ export class CheeseMap extends TileMap {
 
   hasCheese = () => {
     return this.data.some(cheese => cheese.solid && cheese.moldiness < 100);
-  }
+  };
 }
 
 export class CheeseTileSprite extends TileSprite {

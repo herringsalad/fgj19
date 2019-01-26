@@ -30,7 +30,6 @@ export class Player extends Actor {
     this.texture = texture;
     this.biteSize = 20;
     this.collisionType = CollisionType.Active;
-    this.collisionArea = new CircleArea({ pos: new Vector(0, 0), radius: 20 });
     //this.collisionArea = new PolygonArea({
     //  points: [
     //    new Vector(-20, -20),
@@ -42,8 +41,8 @@ export class Player extends Actor {
     this.eatCheese = eatCheese;
 
     // make player hitbox smaller
-    this.setWidth(this.getWidth() * .3);
-    this.setHeight(this.getHeight() * .3);
+    // this.setWidth(this.getWidth() * 0.3);
+    // this.setHeight(this.getHeight() * 0.3);
 
     //this.on(EventTypes.PreCollision, e => {
     //  console.log("precoll")
@@ -61,32 +60,20 @@ export class Player extends Actor {
     if (xVelocity && yVelocity) return;
 
     const cheese = engine.tileMap.cheeseAt(
-      this.pos.x + xVelocity * 32,
-      this.pos.y + yVelocity * 32
+      this.pos.x + xVelocity * 64,
+      this.pos.y + yVelocity * 64
     );
 
     if (cheese) {
-      cheese.consume(1);
+      cheese.consume(2);
     }
-
-    /*
-    const cell: CheeseCell = engine.currentScene.tileMaps[0].getCellByPoint(
-      this.pos.x + xVelocity * 32,
-      this.pos.y + yVelocity * 32
-    ) as CheeseCell;
-
-    // if solid cell found, dinner time :-)
-    if (cell && cell.solid && cell.moldiness < 100) {
-      this.eatCheese(cell);
-    }
-    */
   }
 
   draw(ctx: CanvasRenderingContext2D, delta: number) {
     super.draw(ctx, delta);
 
     // draw player hitbox
-    this.getBounds().debugDraw(ctx, Color.fromRGB(0, 255, 0, .5));
+    this.getBounds().debugDraw(ctx, Color.fromRGB(0, 255, 0, 0.5));
   }
 
   update(engine: Game, delta: number) {
