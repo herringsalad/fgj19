@@ -45,7 +45,8 @@ export class Game extends Engine {
     mouseTexture: new Texture('/assets/images/Mouse sprites.png'),
     music: new Sound('/assets/sounds/juustoa.ogg'),
     moldmusic: new Sound('/assets/sounds/homejuustoa.ogg'),
-    mouseSqueak: new Sound('assets/sounds/Hiirulainen.wav')
+    mouseSqueak: new Sound('assets/sounds/Hiirulainen.wav'),
+    mouseEat: new Sound('assets/sounds/MumsMums.wav')
   };
 
   rows = 20;
@@ -155,7 +156,7 @@ export class Game extends Engine {
       this.scoreLabel = new Label('Hello world', -10, -10, '10px Arial');
       this.add(this.scoreLabel);
 
-      const player = new Player(new Vector(300, 300), this.assets.mouseTexture, this.assets.mouseSqueak);
+      const player = new Player(new Vector(300, 300), this.assets.mouseTexture, this.assets.mouseSqueak, this.assets.mouseEat);
       game.currentScene.camera.strategy.lockToActor(player);
 
       this.add(player);

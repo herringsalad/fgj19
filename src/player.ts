@@ -24,8 +24,9 @@ export class Player extends Actor {
   speed = 256;
   spriteSheet: SpriteSheet;
   squeak: Sound;
+  eatSound: Sound;
 
-  constructor(initPos: Vector, texture: Texture, squeak: Sound) {
+  constructor(initPos: Vector, texture: Texture, squeak: Sound, eatSound: Sound) {
     super(initPos.x, initPos.y, 40, 40);
 
     this.texture = texture;
@@ -36,6 +37,7 @@ export class Player extends Actor {
     // this.setWidth(this.getWidth() * 0.2);
     // this.setHeight(this.getHeight() * 0.2);
     this.squeak = squeak;
+    this.eatSound = eatSound;
   }
 
   onInitialize(game: Engine) {
@@ -140,6 +142,9 @@ export class Player extends Actor {
     );
 
     if (cheese && cheese.moldiness < 50 && cheese.hp > 0) {
+      if (this.eatSound.instanceCount() === 0 ) {
+        this.eatSound.play(.5);
+      }
       cheese.consume(delta);
       return true;
     }
