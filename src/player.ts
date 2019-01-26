@@ -150,20 +150,11 @@ export class Player extends Actor {
     );
 
     if (cheese && cheese.moldiness < 50 && cheese.hp > 0) {
-      if (yVelocity < 0) {
-        this.setDrawing('eatUp');
-      }
-      if (yVelocity > 0) {
-        this.setDrawing('eatDown');
-      }
-      if (xVelocity < 0) {
-        this.setDrawing('eatLeft');
-      }
-      if (xVelocity > 0) {
-        this.setDrawing('eatRight');
-      }
       cheese.consume(delta);
+      return true;
     }
+
+    return false;
   }
 
   draw(ctx: CanvasRenderingContext2D, delta: number) {
@@ -181,19 +172,15 @@ export class Player extends Actor {
 
     if (engine.input.keyboard.isHeld(Input.Keys.Up)) {
       yVelocity -= 1;
-      this.setDrawing('walkUp');
     }
     if (engine.input.keyboard.isHeld(Input.Keys.Down)) {
       yVelocity += 1;
-      this.setDrawing('walkDown');
     }
     if (engine.input.keyboard.isHeld(Input.Keys.Left)) {
       xVelocity -= 1;
-      this.setDrawing('walkLeft');
     }
     if (engine.input.keyboard.isHeld(Input.Keys.Right)) {
       xVelocity += 1;
-      this.setDrawing('walkRight');
     }
 
     if (!xVelocity && !yVelocity) {
@@ -221,7 +208,20 @@ export class Player extends Actor {
       this.vel.x = newVel.x * this.speed;
       this.vel.y = newVel.y * this.speed;
 
-      this.maybeEat(engine, delta, xVelocity, yVelocity);
+      const didEat = this.maybeEat(engine, delta, xVelocity, yVelocity);
+
+      if (yVelocity < 0) {
+        this.setDrawing(didEat ? 'eatUp' : 'walkUp');
+      }
+      if (yVelocity > 0) {
+        this.setDrawing(didEat ? 'eatDown' : 'walkDown');
+      }
+      if (xVelocity < 0) {
+        this.setDrawing(didEat ? 'eatLeft' : 'walkLeft');
+      }
+      if (xVelocity > 0) {
+        this.setDrawing(didEat ? 'eatRight' : 'walkRight');
+      }
     }
   }
 }
