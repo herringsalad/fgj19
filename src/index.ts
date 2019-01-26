@@ -43,6 +43,7 @@ export class Game extends Engine {
     ),
     semimoldTilefile: new Texture('/assets/images/Semihome kolo tiles.png'),
     bgFile: new Texture('/assets/images/Lattia tiles.png'),
+    furniture: new Texture('/assets/images/Sisustus.png'),
     moldTexture: new Texture('/assets/images/Itiö sprites (10x10).png'),
     mouseTexture: new Texture('/assets/images/Mouse sprites.png'),
     music: new Sound('/assets/sounds/juustoa.ogg'),
@@ -152,6 +153,12 @@ export class Game extends Engine {
       }
       this.add(bg);
 
+      const furniture = new Actor();
+      furniture.addDrawing('furniture', this.assets.furniture.asSprite());
+      furniture.pos = new Vector(705, 705);
+      furniture.scale = new Vector(2, 2);
+      this.add(furniture);
+
       this.tileMap = new CheeseMap(this, {
         x: 0,
         y: 0,
@@ -170,7 +177,7 @@ export class Game extends Engine {
       this.moldLabel.color = Color.White;
 
       const player = new Player(
-        new Vector((width + 380) / 2, (height + 800) / 2),
+        new Vector((width + 360) / 2, (height + 840) / 2),
         // new Vector(0, 0),
         this.assets.mouseTexture,
         this.assets.mouseSqueak,
@@ -179,8 +186,19 @@ export class Game extends Engine {
       scoreBg.add(this.scoreLabel);
       scoreBg.add(this.moldLabel);
       player.add(scoreBg);
+
+      // best way of making room for player and furniture
       this.tileMap.deleteCheese(
         this.tileMap.cheeseAt((width + 380) / 2, (height + 800) / 2)!
+      );
+      this.tileMap.deleteCheese(
+        this.tileMap.cheeseAt((width + 470) / 2, (height + 800) / 2)!
+      );
+      this.tileMap.deleteCheese(
+        this.tileMap.cheeseAt((width + 380) / 2, (height + 900) / 2)!
+      );
+      this.tileMap.deleteCheese(
+        this.tileMap.cheeseAt((width + 470) / 2, (height + 900) / 2)!
       );
 
       game.currentScene.camera.strategy.lockToActor(player);
