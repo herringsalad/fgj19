@@ -9,7 +9,9 @@ import {
   Texture,
   Vector,
   Sprite,
-  SpriteSheet
+  SpriteSheet,
+  PolygonArea,
+  EventTypes
 } from 'excalibur';
 
 import { Game } from './';
@@ -17,40 +19,20 @@ import { CheeseMap } from './cheeseMap';
 
 export class Player extends Actor {
   texture: Texture;
-  eatCheese: (cell: Cell) => void;
   biteSize: number;
   speed = 256;
   spriteSheet: SpriteSheet;
 
-  constructor(
-    initPos: Vector,
-    texture: Texture,
-    eatCheese: (cell: Cell) => void,
-    tm: CheeseMap
-  ) {
+  constructor(initPos: Vector, texture: Texture) {
     super(initPos.x, initPos.y, 40, 40);
 
     this.texture = texture;
     this.biteSize = 20;
     this.collisionType = CollisionType.Active;
-    //this.collisionArea = new PolygonArea({
-    //  points: [
-    //    new Vector(-20, -20),
-    //    new Vector(-20, 60),
-    //    new Vector(60, 60),
-    //    new Vector(60, -20),
-    //  ]
-    //});
-    this.eatCheese = eatCheese;
 
     // make player hitbox smaller
-    // this.setWidth(this.getWidth() * 0.3);
-    // this.setHeight(this.getHeight() * 0.3);
-
-    //this.on(EventTypes.PreCollision, e => {
-    //  console.log("precoll")
-    //  e.actor.vel = e.actor.vel.scale(-1);
-    //})
+    // this.setWidth(this.getWidth() * 0.2);
+    // this.setHeight(this.getHeight() * 0.2);
   }
 
   onInitialize(game: Engine) {
@@ -142,7 +124,7 @@ export class Player extends Actor {
   maybeEat(engine: Game, delta: number, xVelocity: number, yVelocity: number) {
     // try finding nearby cell in movement dir
 
-    if (xVelocity && yVelocity) return;
+    if (xVelocity && yVelocity) return false;
 
     const cheese = engine.tileMap.cheeseAt(
       this.pos.x + xVelocity * 64,
@@ -201,6 +183,11 @@ export class Player extends Actor {
     this.vel.x = 0;
     this.vel.y = 0;
 
+    engine.particleEmitter.pos.x = this.pos.x + xVelocity * 48;
+    engine.particleEmitter.pos.y = this.pos.y + yVelocity * 48;
+
+    engine.particleEmitter.isEmitting = false;
+
     if (xVelocity || yVelocity) {
       // set player movement speed
       const newVel = new Vector(xVelocity, yVelocity).normalize();
@@ -209,6 +196,7 @@ export class Player extends Actor {
       this.vel.y = newVel.y * this.speed;
 
       const didEat = this.maybeEat(engine, delta, xVelocity, yVelocity);
+      engine.particleEmitter.isEmitting = didEat;
 
       if (yVelocity < 0) {
         this.setDrawing(didEat ? 'eatUp' : 'walkUp');

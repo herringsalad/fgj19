@@ -1,5 +1,5 @@
 import * as ex from 'excalibur';
-import {Engine, EventTypes, Label, PostUpdateEvent, SpriteSheet, TileMap, TileSprite, Vector} from 'excalibur';
+import {Engine, EventTypes, Label, PostUpdateEvent, SpriteSheet, TileMap, TileSprite, Vector, ParticleEmitter} from 'excalibur';
 import {newMold} from './mold';
 import {Player} from './player';
 import {CheeseMap} from './cheeseMap';
@@ -24,6 +24,9 @@ export class Game extends Engine {
     fgTilefile: new ex.Texture('/assets/Kolo tiles.png'),
     bgTilefile: new ex.Texture('/assets/Tausta tiles.png'),
     moldTilefile: new ex.Texture('/assets/Home kolo tiles.png'),
+    cheeseParticles: new ex.Texture(
+      '/assets/Particulate cheese sprites (10x10).png'
+    ),
     semimoldTilefile: new ex.Texture('/assets/Semihome kolo tiles.png'),
     bgFile: new ex.Texture('/assets/Lattia tiles.png'),
     moldTexture: new ex.Texture('/assets/Itiö sprites (10x10).png'),
@@ -39,6 +42,7 @@ export class Game extends Engine {
   moldcount = 0;
   score = 0;
   scoreLabel: ex.Label;
+  particleEmitter: ParticleEmitter;
 
   constructor() {
     super({
@@ -135,15 +139,34 @@ export class Game extends Engine {
       this.scoreLabel = new Label('Hello world', -10, -10, '10px Arial');
       this.add(this.scoreLabel);
 
-      const player = new Player(
-        new Vector(300, 300),
-        this.assets.mouseTexture,
-        this.tileMap.eatCheese,
-        this.tileMap
-      );
+      const player = new Player(new Vector(300, 300), this.assets.mouseTexture);
       game.currentScene.camera.strategy.lockToActor(player);
 
       this.add(player);
+
+      this.particleEmitter = new ParticleEmitter({
+        startSize: 1,
+        randomRotation: true,
+        maxVel: 20,
+        maxAngle: Math.PI * 2,
+        minVel: 5,
+        numParticles: 3,
+        emitRate: 4,
+        fadeFlag: true,
+        particleLife: 1000,
+        opacity: 1,
+        isEmitting: false
+      });
+
+      const particleSprite = new SpriteSheet(
+        this.assets.cheeseParticles,
+        1,
+        3,
+        10,
+        10
+      );
+      this.particleEmitter.particleSprite = particleSprite.sprites[0];
+      this.add(this.particleEmitter);
 
       // Start game
       this.assets.music.play();

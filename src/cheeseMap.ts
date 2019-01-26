@@ -1,7 +1,15 @@
-import {Cell, ICellArgs, ITileMapArgs, SpriteSheet, TileMap, TileSprite, Vector} from 'excalibur';
-import {getTiles} from './tilebuilder';
+import {
+  Cell,
+  ICellArgs,
+  ITileMapArgs,
+  SpriteSheet,
+  TileMap,
+  TileSprite,
+  Vector
+} from 'excalibur';
+import { getTiles } from './tilebuilder';
 import * as cheeseStructure from './cheeseBuilder';
-import {Game} from '.';
+import { Game } from '.';
 
 export class CheeseCell extends Cell {
   public hp: number;
@@ -13,7 +21,7 @@ export class CheeseCell extends Cell {
   game: Game;
 
   constructor(game: Game, config: ICellArgs, x: number, y: number, hp = 100) {
-    super({sprites: [], ...config});
+    super({ sprites: [], ...config });
     this.game = game;
     this.hp = hp;
     this.moldiness = 0;
@@ -57,10 +65,12 @@ export class CheeseMap extends TileMap {
   moldData: boolean[][];
   semimoldData: boolean[][];
   background: boolean[][];
+  game: Game;
 
   constructor(game: Game, config: ITileMapArgs) {
     super(config);
 
+    this.game = game;
     const fgTilesheet = new SpriteSheet(game.assets.fgTilefile, 5, 3, 32, 32);
     this.registerSpriteSheet('default', fgTilesheet);
     const bgTilesheet = new SpriteSheet(game.assets.bgTilefile, 5, 3, 32, 32);
@@ -109,7 +119,7 @@ export class CheeseMap extends TileMap {
             : 0;
         this.mapdata[col][row] =
           cheeseStructure.perlin(new Vector(row, col).scale(1 / 64)) -
-          distance >
+            distance >
           0.5;
         this.background[col][row] = !distance;
         this.moldData[col][row] = false;
@@ -166,6 +176,8 @@ export class CheeseMap extends TileMap {
     this.fgTiles = getTiles(this.mapdata);
     this.data.forEach(cell => cell.clearSprites());
     this.data.forEach(this.drawCell);
+    this.game.particleEmitter.clearParticles();
+    setTimeout(() => this.game.particleEmitter.clearParticles(), 10);
   };
 
   moldCheese = (cell: CheeseCell) => {
