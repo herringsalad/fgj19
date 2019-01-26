@@ -12,9 +12,12 @@ import {
 } from 'excalibur';
 import Vector2 = Phaser.Math.Vector2;
 
+import { CheeseCell } from './cheeseBlocks';
+
 export class Player extends Actor {
   texture: Texture;
   eatCheese: (cell: Cell) => void;
+  biteSize: number;
 
   constructor(
     initPos: Vector,
@@ -24,6 +27,7 @@ export class Player extends Actor {
     super(initPos.x, initPos.y, 40, 40);
 
     this.texture = texture;
+    this.biteSize = 20;
     this.collisionType = CollisionType.Active;
     this.collisionArea = new CircleArea({ pos: new Vector(0, 0), radius: 20 });
     this.eatCheese = eatCheese;
