@@ -7,13 +7,13 @@ export const newMold = (game: Game, anim: Animation, moldPartySound: Sound, onKi
   const rand = Math.random();
   let pos: Vector;
   if (rand < 0.25) {
-    pos = new Vector(-game.width / 2, Math.random() * game.height);
+    pos = new Vector(-game.width, Math.random() * game.height);
   } else if (rand < 0.5) {
-    pos = new Vector(game.width * 1.5, Math.random() * game.height);
+    pos = new Vector(game.width * 2, Math.random() * game.height);
   } else if (rand < 0.75) {
-    pos = new Vector(Math.random() * game.width, -game.height / 2);
+    pos = new Vector(Math.random() * game.width, -game.height);
   } else {
-    pos = new Vector(Math.random() * game.width, game.height * 1.5);
+    pos = new Vector(Math.random() * game.width, game.height * 2);
   }
   game.add(new Mold(pos, Math.random() * 10 + 50, anim, moldPartySound, onKill));
 };
