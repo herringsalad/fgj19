@@ -1,5 +1,5 @@
 import * as ex from 'excalibur';
-import { Cell, EventTypes, Vector } from 'excalibur';
+import {Cell, EventTypes, PostUpdateEvent, Vector} from 'excalibur';
 import { Mold } from './mold';
 import { Player } from './player';
 import { TileMapCollisionDetection } from 'excalibur/dist/Traits/Index';
@@ -10,7 +10,10 @@ import { CheeseCell, CheeseMap } from './cheeseBlocks';
 const width = 1280;
 const height = 1080;
 
-const game = new ex.Engine({ width, height });
+const moldmusicvol = 0.7;
+const musicvol = 1;
+
+const game = new ex.Engine({width, height});
 
 const findCheese = (pos: Vector) => {
   return tm.findCheese(pos);
@@ -60,11 +63,25 @@ const moldCheese = (cell: CheeseCell) => {
 };
 
 let timer = 0;
+let moldcount = 0;
+
+const modVolume = (event: PostUpdateEvent) => {
+  console.log(moldmusic.volume, music.volume);
+  moldmusic.volume = Math.min(moldmusicvol, moldmusic.volume + event.delta / 4000);
+  music.volume = Math.max(0, music.volume - event.delta / 4000);
+  if(moldmusic.volume < moldmusicvol - 0.01 || music.volume > 0) {
+    game.once(EventTypes.PostUpdate, modVolume)
+  }
+};
 
 game.on(EventTypes.PostUpdate, event => {
   timer += event.delta;
   if (timer > 2000 && tm.hasCheese()) {
     timer = 0;
+    moldcount += 1;
+    if (moldcount == 10) {
+      game.once(EventTypes.PostUpdate, modVolume);
+    }
     newMold();
   }
 });
@@ -73,7 +90,11 @@ const fgTilefile = new ex.Texture('/assets/Kolo tiles.png');
 const bgTilefile = new ex.Texture('/assets/Tausta tiles.png');
 const moldTilefile = new ex.Texture('/assets/Tausta tiles.png');
 const mouseTexture = new ex.Texture('/assets/mouse.png');
-const loader = new ex.Loader([fgTilefile, bgTilefile, mouseTexture]);
+
+const music = new ex.Sound('/assets/juustoa.ogg');
+const moldmusic = new ex.Sound('/assets/homejuustoa.ogg');
+
+const loader = new ex.Loader([fgTilefile, bgTilefile, mouseTexture, music, moldmusic]);
 const tileMapCollision = new TileMapCollisionDetection();
 const rows = 20;
 const cols = 20;
@@ -127,8 +148,16 @@ tm.registerSpriteSheet('mold', moldTilesheet);
 
 tm.data.forEach(drawCell);
 
+music.volume = musicvol;
+moldmusic.volume = 0;
+
 game.start(loader).then(() => {
   game.add(tm);
+
+  music.play();
+  moldmusic.play();
+  music.loop = true;
+  moldmusic.loop = true;
 
   const player = new Player(new Vector(300, 300), mouseTexture, eatCheese);
   game.currentScene.camera.strategy.lockToActor(player);
