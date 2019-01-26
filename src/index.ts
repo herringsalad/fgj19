@@ -133,7 +133,7 @@ export class Game extends Engine {
           this.moldcount -= 1;
           this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
         });
-      } else if (this.tileMap.hasCheese()) {
+      } else if (!this.tileMap.hasCheese()) {
         game.off(EventTypes.PostUpdate);
         this.endScreen();
       }
