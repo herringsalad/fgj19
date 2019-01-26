@@ -1,9 +1,9 @@
-import { Animation, Actor, CollisionType, EventTypes, Vector } from 'excalibur';
+import { Animation, Actor, CollisionType, EventTypes, Sound, Vector } from 'excalibur';
 import { CheeseCell } from './cheeseMap';
 import { Game } from '.';
 import { Player } from './player';
 
-export const newMold = (game: Game, anim: Animation, onKill: () => void) => {
+export const newMold = (game: Game, anim: Animation, moldPartySound: Sound, onKill: () => void) => {
   const rand = Math.random();
   let pos: Vector;
   if (rand < 0.25) {
@@ -15,7 +15,7 @@ export const newMold = (game: Game, anim: Animation, onKill: () => void) => {
   } else {
     pos = new Vector(Math.random() * game.width, game.height * 1.5);
   }
-  game.add(new Mold(pos, Math.random() * 10 + 50, anim, onKill));
+  game.add(new Mold(pos, Math.random() * 10 + 50, anim, moldPartySound, onKill));
 };
 
 export class Mold extends Actor {
@@ -26,8 +26,9 @@ export class Mold extends Actor {
   id: number;
   time: number;
   targetMoldiness: number;
+  partySound: Sound;
 
-  constructor(pos: Vector, speed, moldTexture: Animation, onKill: () => void) {
+  constructor(pos: Vector, speed, moldTexture: Animation, moldPartySound, onKill: () => void) {
     super(pos.x, pos.y, 20, 20);
     this.addDrawing('stock', moldTexture);
     this.target = new Vector(400, 300);
@@ -38,12 +39,20 @@ export class Mold extends Actor {
     this.id = Math.random() * 10;
     this.time = 0;
     this.targetMoldiness = this.id > 5 ? 50 : 100;
+    this.partySound = moldPartySound;
     this.on(EventTypes.PreCollision, event => {
       if (event!.other instanceof Player) {
         onKill();
         this.kill();
       }
     });
+  }
+
+  onInitialize() {
+    if (this.partySound.instanceCount() < 5 && this.id < 1) {
+      this.partySound.loop = true;
+      this.partySound.play(.1);
+    }
   }
 
   update(game: Game, delta: number): void {
@@ -76,6 +85,7 @@ export class Mold extends Actor {
       this.vel = direction.normalize().scale(this.speed);
       this.time += delta;
       if (this.targetCheese && this.target.sub(this.pos).magnitude() < 40) {
+
         this.targetCheese.mold(delta);
       }
       this.vel.addEqual(

@@ -46,7 +46,8 @@ export class Game extends Engine {
     music: new Sound('/assets/sounds/juustoa.ogg'),
     moldmusic: new Sound('/assets/sounds/homejuustoa.ogg'),
     mouseSqueak: new Sound('assets/sounds/Hiirulainen.wav'),
-    mouseEat: new Sound('assets/sounds/MumsMums.wav')
+    mouseEat: new Sound('assets/sounds/MumsMums.wav'),
+    moldParty: new Sound('assets/sounds/Homeitio.wav')
   };
 
   rows = 20;
@@ -111,7 +112,7 @@ export class Game extends Engine {
         }
         const sheet = new SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
         const anim = sheet.getAnimationForAll(game, 500);
-        newMold(this, anim, () => {
+        newMold(this, anim, this.assets.moldParty, () => {
           this.moldcount -= 1;
         });
       }
