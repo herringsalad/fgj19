@@ -42,7 +42,7 @@ export class CheeseCell extends Cell {
   mold() {
     this.moldiness += 1;
     if (this.moldiness == 50) {
-      this.moldCheese(this);
+      this.game.tileMap.moldCheese(this);
     }
     if (this.moldiness == 100) {
       this.game.tileMap.moldCheese(this);
