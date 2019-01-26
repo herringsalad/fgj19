@@ -119,8 +119,7 @@ export class CheeseMap extends TileMap {
             : 0;
         this.mapdata[col][row] =
           cheeseStructure.perlin(new Vector(row, col).scale(1 / 64)) -
-            distance >
-          0.5;
+            distance > 0.58;
         this.background[col][row] = !distance;
         this.moldData[col][row] = false;
         this.semimoldData[col][row] = false;
