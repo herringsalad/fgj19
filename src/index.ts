@@ -28,8 +28,9 @@ export class Game extends Engine {
     moldTilefile: new ex.Texture('/assets/Home kolo tiles.png'),
     semimoldTilefile: new ex.Texture('/assets/Semihome kolo tiles.png'),
     mouseTexture: new ex.Texture('/assets/mouse.png'),
+    moldTexture: new ex.Texture('/assets/Itiö sprites (10x10).png'),
     music: new ex.Sound('/assets/juustoa.ogg'),
-    moldmusic: new ex.Sound('/assets/homejuustoa.ogg')
+    moldmusic: new ex.Sound('/assets/homejuustoa.ogg'),
   };
 
   rows = 20;
@@ -92,7 +93,9 @@ export class Game extends Engine {
         if (this.moldcount == 10) {
           game.once(EventTypes.PostUpdate, this.modVolume);
         }
-        newMold(this);
+        const sheet = new ex.SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
+        const anim = sheet.getAnimationForAll(game, 125);
+        newMold(this, anim);
       }
     });
 

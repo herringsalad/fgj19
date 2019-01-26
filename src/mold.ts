@@ -1,8 +1,9 @@
-import { Actor, Color, Vector } from 'excalibur';
+import {Actor, Color, Texture, Vector} from 'excalibur';
 import { CheeseCell } from './cheeseMap';
 import { Game } from '.';
+import * as ex from 'excalibur';
 
-export const newMold = (game: Game) => {
+export const newMold = (game: Game, anim: ex.Animation) => {
   const rand = Math.random();
   let pos: Vector;
   if (rand < 0.25) {
@@ -14,7 +15,7 @@ export const newMold = (game: Game) => {
   } else {
     pos = new Vector(Math.random() * game.width, game.height * 1.5);
   }
-  game.add(new Mold(pos, Math.random() * 10 + 50));
+  game.add(new Mold(pos, Math.random() * 10 + 50, anim));
 };
 
 export class Mold extends Actor {
@@ -26,9 +27,9 @@ export class Mold extends Actor {
   time: number;
   targetMoldiness: number;
 
-  constructor(pos: Vector, speed: number = 50) {
+  constructor(pos: Vector, speed, moldTexture: ex.Animation) {
     super(pos.x, pos.y, 20, 20);
-    this.color = Color.Blue;
+    this.addDrawing('stock', moldTexture);
     this.target = new Vector(400, 300);
     this.speed = speed;
     this.hp = 3;
