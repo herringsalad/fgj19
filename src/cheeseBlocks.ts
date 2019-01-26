@@ -1,7 +1,8 @@
-import { 
-  Cell, ICellArgs, 
+import {
+  Cell, ICellArgs,
   TileMap, ITileMapArgs,
-  TileSprite } from 'excalibur';
+  TileSprite, Vector
+} from 'excalibur';
 
 export class CheeseCell extends Cell {
   public hp: number;
@@ -37,6 +38,20 @@ export class CheeseMap extends TileMap {
         })();
       }
     }
+  }
+
+  findCheese(pos: Vector) {
+    let max_pos = new Vector(1/0, 1/0);
+    let targetCheese: CheeseCell = undefined;
+    this.data.forEach(cheese => {
+      const distance = new Vector(cheese.x, cheese.y);
+      distance.subEqual(pos);
+      if (cheese.solid && distance.magnitude() < max_pos.magnitude()) {
+        max_pos = distance;
+        targetCheese = cheese;
+      }
+    });
+    return targetCheese;
   }
 }
 

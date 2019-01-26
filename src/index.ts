@@ -19,8 +19,12 @@ for (let i = 0; i < Math.max(width / 64, height / 64); i++) {
   game.add(row);
 }
 
-game.add(new Mold(new Vector(500, 500)));
-game.add(new Mold(new Vector(400, 600)));
+const findCheese = (mold: Mold) => {
+  return tm.findCheese(mold.pos);
+};
+
+game.add(new Mold(new Vector(500, 500), findCheese, 5));
+game.add(new Mold(new Vector(400, 600), findCheese, 5));
 
 const tileSheet = new ex.Texture('/assets/Kolo tiles.png');
 const mouseTexture = new ex.Texture('/assets/mouse.png');
