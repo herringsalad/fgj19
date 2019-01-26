@@ -53,8 +53,8 @@ export class Player extends Actor {
     this.collisionType = CollisionType.Active;
 
     // make player hitbox smaller
-    this.setWidth(8);
-    this.setHeight(8);
+    this.setWidth(24);
+    this.setHeight(24);
 
     this.squeak = squeak;
     this.eatSound = eatSound;
@@ -62,6 +62,7 @@ export class Player extends Actor {
 
   onInitialize(game: Engine) {
     this.spriteSheet = new SpriteSheet(this.texture, 1, 20, 39, 45);
+    this.scale = new Vector(2, 2);
 
     const animSpeed = 200;
 
@@ -156,7 +157,7 @@ export class Player extends Actor {
 
     if (xVelocity && yVelocity) return false;
 
-    const cheeseSearchDist = 8;
+    const cheeseSearchDist = 32;
     const cheese = engine.tileMap.cheeseAt(
       this.pos.x + xVelocity * cheeseSearchDist,
       this.pos.y + yVelocity * cheeseSearchDist
@@ -177,7 +178,7 @@ export class Player extends Actor {
     super.draw(ctx, delta);
 
     // draw player hitbox
-    //this.getBounds().debugDraw(ctx, Color.fromRGB(0, 255, 0, 0.5));
+    // this.getBounds().debugDraw(ctx, Color.fromRGB(0, 255, 0, 0.5));
   }
 
   update(engine: Game, delta: number) {
@@ -261,8 +262,8 @@ export class Player extends Actor {
     this.vel.x = 0;
     this.vel.y = 0;
 
-    engine.particleEmitter.pos.x = this.pos.x + xVelocity * 32;
-    engine.particleEmitter.pos.y = this.pos.y + yVelocity * 32;
+    engine.particleEmitter.pos.x = this.pos.x + xVelocity * 48;
+    engine.particleEmitter.pos.y = this.pos.y + yVelocity * 48;
 
     engine.particleEmitter.isEmitting = false;
 

@@ -18,8 +18,8 @@ import { CheeseMap } from './cheeseMap';
 import {logo} from "./logo";
 import {Splash} from "./loader";
 
-const width = 1280/2;
-const height = 1080/2;
+const width = 1280 / 2;
+const height = 1080 / 2;
 
 /*
 const moldmusicvol = 0; // 0.7;
@@ -95,6 +95,7 @@ export class Game extends Engine {
   };
 
   start() {
+    this.setAntialiasing(false);
     this.timer = 0;
     this.score = 0;
 
@@ -160,8 +161,15 @@ export class Game extends Engine {
       this.scoreLabel = new Label('Hello world', -10, -10, '10px Arial');
       this.add(this.scoreLabel);
 
-      const player = new Player(new Vector((width + 700) / 2, (height + 700) / 2), this.assets.mouseTexture, this.assets.mouseSqueak, this.assets.mouseEat);
-      this.tileMap.deleteCheese(this.tileMap.cheeseAt((width + 700)/2, (height + 700) / 2)!);
+      const player = new Player(
+        new Vector((width + 700) / 2, (height + 700) / 2),
+        this.assets.mouseTexture,
+        this.assets.mouseSqueak,
+        this.assets.mouseEat
+      );
+      this.tileMap.deleteCheese(
+        this.tileMap.cheeseAt((width + 700) / 2, (height + 700) / 2)!
+      );
 
       game.currentScene.camera.strategy.lockToActor(player);
 
