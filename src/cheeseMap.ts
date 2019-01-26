@@ -107,7 +107,11 @@ export class CheeseMap extends TileMap {
     this.semimoldData = [];
     this.background = [];
 
-    const p: [number, number, number] = [Math.random() * 15, Math.random() * 15, Math.random() * 10000];
+    const p: [number, number, number] = [
+      Math.random() * 15,
+      Math.random() * 15,
+      Math.random() * 10000
+    ];
 
     for (let col = 0; col < config.cols / 2; col++) {
       this.mapdata[col] = [];
@@ -121,7 +125,8 @@ export class CheeseMap extends TileMap {
             : 0;
         this.mapdata[col][row] =
           cheeseStructure.perlin(new Vector(row, col).scale(1 / 64), p) -
-            distance > 0.58;
+            distance >
+          0.58;
         this.background[col][row] = !distance;
         this.moldData[col][row] = false;
         this.semimoldData[col][row] = false;
@@ -173,6 +178,7 @@ export class CheeseMap extends TileMap {
     const y = cell.dataY;
     const x = cell.dataX;
     cell.solid = false;
+    cell.hp = 0;
     this.mapdata[y][x] = false;
     this.fgTiles = getTiles(this.mapdata);
     this.data.forEach(cell => cell.clearSprites());
