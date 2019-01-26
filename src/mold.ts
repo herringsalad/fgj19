@@ -44,6 +44,10 @@ export class Mold extends Actor {
     if (!this.targetCheese || !this.targetCheese.solid || this.targetCheese.moldiness > this.targetMoldiness) {
       this.targetCheese = game.findCheese(this.pos,  this.targetMoldiness);
       if(this.targetCheese) {
+        this.targetCheese = game.findCheese(this.pos,  100);
+      }
+
+      if(this.targetCheese) {
         this.target = new Vector(this.targetCheese!.x + 16, this.targetCheese!.y + 16);
         console.log("updating cheesetarget", (this.targetCheese as any).moldiness);
       }
