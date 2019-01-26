@@ -15,6 +15,8 @@ import {
 import { newMold } from './mold';
 import { Player } from './player';
 import { CheeseMap } from './cheeseMap';
+import {logo} from "./logo";
+import {Splash} from "./loader";
 
 const width = 1280/2;
 const height = 1080/2;
@@ -120,7 +122,7 @@ export class Game extends Engine {
     });
 
     // Loads all assets
-    const loader = new Loader([
+    const loader = new Splash([
       ...Object.keys(this.assets).map(textureName => this.assets[textureName])
     ]);
 
