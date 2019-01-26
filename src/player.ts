@@ -18,6 +18,13 @@ import {
 import { Game } from './';
 import { CheeseMap } from './cheeseMap';
 
+enum Direction {
+  Up,
+  Down,
+  Left,
+  Right
+}
+
 export class Player extends Actor {
   texture: Texture;
   biteSize: number;
@@ -25,17 +32,30 @@ export class Player extends Actor {
   spriteSheet: SpriteSheet;
   squeak: Sound;
   eatSound: Sound;
+  lastDirectionPressed?: Direction;
 
-  constructor(initPos: Vector, texture: Texture, squeak: Sound, eatSound: Sound) {
+  constructor(
+    initPos: Vector,
+    texture: Texture,
+    squeak: Sound,
+    eatSound: Sound
+  ) {
     super(initPos.x, initPos.y, 40, 40);
+
+    this._postupdate = (engine: Game, delta: number) => {
+      super._postupdate(engine, delta);
+      this.pos.x = Math.floor(this.pos.x);
+      this.pos.y = Math.floor(this.pos.y);
+    };
 
     this.texture = texture;
     this.biteSize = 20;
     this.collisionType = CollisionType.Active;
 
     // make player hitbox smaller
-    // this.setWidth(this.getWidth() * 0.2);
-    // this.setHeight(this.getHeight() * 0.2);
+    this.setWidth(8);
+    this.setHeight(8);
+
     this.squeak = squeak;
     this.eatSound = eatSound;
   }
@@ -128,7 +148,7 @@ export class Player extends Actor {
     // sounds
     // mouse squeak
     this.squeak.loop = true;
-    this.squeak.play(.1);
+    this.squeak.play(0.1);
   }
 
   maybeEat(engine: Game, delta: number, xVelocity: number, yVelocity: number) {
@@ -136,14 +156,15 @@ export class Player extends Actor {
 
     if (xVelocity && yVelocity) return false;
 
+    const cheeseSearchDist = 8;
     const cheese = engine.tileMap.cheeseAt(
-      this.pos.x + xVelocity * 64,
-      this.pos.y + yVelocity * 64
+      this.pos.x + xVelocity * cheeseSearchDist,
+      this.pos.y + yVelocity * cheeseSearchDist
     );
 
     if (cheese && cheese.moldiness < 50 && cheese.hp > 0) {
-      if (this.eatSound.instanceCount() === 0 ) {
-        this.eatSound.play(.5);
+      if (this.eatSound.instanceCount() === 0) {
+        this.eatSound.play(0.5);
       }
       cheese.consume(delta);
       return true;
@@ -165,16 +186,34 @@ export class Player extends Actor {
     let xVelocity = 0;
     let yVelocity = 0;
 
-    if (engine.input.keyboard.isHeld(Input.Keys.Up) && this.pos.y > 65) {
+    if (engine.input.keyboard.wasPressed(Input.Keys.Up))
+      this.lastDirectionPressed = Direction.Up;
+    if (engine.input.keyboard.wasPressed(Input.Keys.Down))
+      this.lastDirectionPressed = Direction.Down;
+    if (engine.input.keyboard.wasPressed(Input.Keys.Left))
+      this.lastDirectionPressed = Direction.Left;
+    if (engine.input.keyboard.wasPressed(Input.Keys.Right))
+      this.lastDirectionPressed = Direction.Right;
+
+    if (
+      !engine.input.keyboard.isHeld(Input.Keys.Up) &&
+      !engine.input.keyboard.isHeld(Input.Keys.Down) &&
+      !engine.input.keyboard.isHeld(Input.Keys.Left) &&
+      !engine.input.keyboard.isHeld(Input.Keys.Right)
+    ) {
+      this.lastDirectionPressed = undefined;
+    }
+
+    if (this.lastDirectionPressed == Direction.Up && this.pos.y > 65) {
       yVelocity -= 1;
     }
-    if (engine.input.keyboard.isHeld(Input.Keys.Down) && this.pos.y < 1200) {
+    if (this.lastDirectionPressed == Direction.Down && this.pos.y < 1200) {
       yVelocity += 1;
     }
-    if (engine.input.keyboard.isHeld(Input.Keys.Left) && this.pos.x > 65) {
+    if (this.lastDirectionPressed == Direction.Left && this.pos.x > 65) {
       xVelocity -= 1;
     }
-    if (engine.input.keyboard.isHeld(Input.Keys.Right) && this.pos.x < 1200) {
+    if (this.lastDirectionPressed == Direction.Right && this.pos.x < 1200) {
       xVelocity += 1;
     }
 
@@ -196,8 +235,8 @@ export class Player extends Actor {
     this.vel.x = 0;
     this.vel.y = 0;
 
-    engine.particleEmitter.pos.x = this.pos.x + xVelocity * 48;
-    engine.particleEmitter.pos.y = this.pos.y + yVelocity * 48;
+    engine.particleEmitter.pos.x = this.pos.x + xVelocity * 32;
+    engine.particleEmitter.pos.y = this.pos.y + yVelocity * 32;
 
     engine.particleEmitter.isEmitting = false;
 
