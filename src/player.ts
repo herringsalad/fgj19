@@ -54,7 +54,7 @@ export class Player extends Actor {
     this.addDrawing('mouse', this.texture.asSprite());
   }
 
-  maybeEat(engine: Game, xVelocity: number, yVelocity: number) {
+  maybeEat(engine: Game, delta: number, xVelocity: number, yVelocity: number) {
     // try finding nearby cell in movement dir
 
     if (xVelocity && yVelocity) return;
@@ -65,7 +65,7 @@ export class Player extends Actor {
     );
 
     if (cheese && !cheese.moldiness && cheese.hp > 0) {
-      cheese.consume(2);
+      cheese.consume(delta);
     }
   }
 
@@ -92,7 +92,7 @@ export class Player extends Actor {
     this.vel.y = yVelocity * this.speed;
 
     if (xVelocity || yVelocity) {
-      this.maybeEat(engine, xVelocity, yVelocity);
+      this.maybeEat(engine, delta, xVelocity, yVelocity);
     }
   }
 }

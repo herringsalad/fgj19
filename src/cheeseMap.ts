@@ -23,18 +23,20 @@ export class CheeseCell extends Cell {
     this.dataY = Math.floor(y / 2);
   }
 
-  consume(biteSize: number) {
-    this.hp -= biteSize;
-    this.game.addScore(biteSize);
+  consume(delta: number) {
+    if (this.solid) {
+      this.hp -= delta / 20;
+      this.game.addScore(Math.round(delta / 10));
 
-    if (this.hp <= 0) {
-      this.game.tileMap.eatCheese(this);
+      if (this.hp <= 0) {
+        this.game.tileMap.eatCheese(this);
+      }
     }
   }
 
   mold(delta: number) {
     const prev = this.moldiness;
-    this.moldiness += delta/50;
+    this.moldiness += delta / 50;
     if (this.moldiness > 50 && prev < 50) {
       this.game.tileMap.moldCheese(this);
     }
@@ -181,11 +183,9 @@ export class CheeseMap extends TileMap {
   };
 
   cheeseAt = (x: number, y: number): CheeseCell | undefined => {
-    const cell = this.getCellByPoint(x, y);
+    const cell: CheeseCell = this.getCellByPoint(x, y) as CheeseCell;
 
-    return this.data[
-    cell.x / cell.width + (cell.y / cell.height) * this.config.rows
-      ];
+    return this.data[cell.dataY * 2 * this.cols + cell.dataX * 2];
   };
 
   findCheese = (pos: Vector, maxMold: number): CheeseCell | undefined => {
