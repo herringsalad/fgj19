@@ -10,7 +10,7 @@ import {
   ParticleEmitter,
   Loader,
   Texture,
-  Sound
+  Sound, UIActor, Color, Actor
 } from 'excalibur';
 import { newMold } from './mold';
 import { Player } from './player';
@@ -159,15 +159,20 @@ export class Game extends Engine {
       });
       this.add(this.tileMap);
 
-      this.scoreLabel = new Label('Hello world', -10, -10, '10px Arial');
-      this.add(this.scoreLabel);
+      const scoreBg = new Actor(-150, -125, width, 20);
+      scoreBg.color = Color.Black;
+      this.scoreLabel = new Label('Hello world', 0, 5, 'monospace');
+      this.scoreLabel.color = Color.White;
 
       const player = new Player(
-        new Vector((width + 700) / 2, (height + 700) / 2),
+        //new Vector((width + 700) / 2, (height + 700) / 2),
+        new Vector(0, 0),
         this.assets.mouseTexture,
         this.assets.mouseSqueak,
         this.assets.mouseEat
       );
+      scoreBg.add(this.scoreLabel);
+      player.add(scoreBg);
       this.tileMap.deleteCheese(
         this.tileMap.cheeseAt((width + 700) / 2, (height + 700) / 2)!
       );
