@@ -161,7 +161,7 @@ export class Player extends Actor {
     super.draw(ctx, delta);
 
     // draw player hitbox
-    this.getBounds().debugDraw(ctx, Color.fromRGB(0, 255, 0, 0.5));
+    //this.getBounds().debugDraw(ctx, Color.fromRGB(0, 255, 0, 0.5));
   }
 
   update(engine: Game, delta: number) {
