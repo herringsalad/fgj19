@@ -107,6 +107,8 @@ export class CheeseMap extends TileMap {
     this.semimoldData = [];
     this.background = [];
 
+    const p: [number, number, number] = [Math.random() * 15, Math.random() * 15, Math.random() * 10000];
+
     for (let col = 0; col < config.cols / 2; col++) {
       this.mapdata[col] = [];
       this.moldData[col] = [];
@@ -118,7 +120,7 @@ export class CheeseMap extends TileMap {
             ? 1
             : 0;
         this.mapdata[col][row] =
-          cheeseStructure.perlin(new Vector(row, col).scale(1 / 64)) -
+          cheeseStructure.perlin(new Vector(row, col).scale(1 / 64), p) -
             distance > 0.58;
         this.background[col][row] = !distance;
         this.moldData[col][row] = false;
@@ -167,7 +169,7 @@ export class CheeseMap extends TileMap {
     cell.pushSprite(new TileSprite('mold', this.moldTiles[y][x]));
   };
 
-  eatCheese = (cell: CheeseCell) => {
+  deleteCheese = (cell: CheeseCell) => {
     const y = cell.dataY;
     const x = cell.dataX;
     cell.solid = false;
@@ -175,6 +177,10 @@ export class CheeseMap extends TileMap {
     this.fgTiles = getTiles(this.mapdata);
     this.data.forEach(cell => cell.clearSprites());
     this.data.forEach(this.drawCell);
+  };
+
+  eatCheese = (cell: CheeseCell) => {
+    this.deleteCheese(cell);
     this.game.particleEmitter.clearParticles();
     setTimeout(() => this.game.particleEmitter.clearParticles(), 10);
   };
