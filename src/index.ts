@@ -1,22 +1,22 @@
 import {
+  Actor,
+  Color,
   Engine,
   EventTypes,
   Label,
+  ParticleEmitter,
   PostUpdateEvent,
+  Sound,
   SpriteSheet,
+  Texture,
   TileMap,
   TileSprite,
-  Vector,
-  ParticleEmitter,
-  Loader,
-  Texture,
-  Sound, UIActor, Color, Actor
+  Vector
 } from 'excalibur';
-import { newMold } from './mold';
-import { Player } from './player';
-import { CheeseMap } from './cheeseMap';
-import { logo } from './logo';
-import { Splash } from './loader';
+import {newMold} from './mold';
+import {Player} from './player';
+import {CheeseMap} from './cheeseMap';
+import {Splash} from './loader';
 
 const width = 1280 / 2;
 const height = 1080 / 2;
@@ -60,6 +60,7 @@ export class Game extends Engine {
   moldcount = 0;
   score = 0;
   scoreLabel: Label;
+  moldLabel: Label;
   particleEmitter: ParticleEmitter;
 
   constructor() {
@@ -112,6 +113,7 @@ export class Game extends Engine {
       if (this.timer > 2000 && this.tileMap.hasCheese()) {
         this.timer = 0;
         this.moldcount += 1;
+        this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
         if (this.moldcount == 25) {
           game.once(EventTypes.PostUpdate, this.modVolume);
         }
@@ -119,6 +121,7 @@ export class Game extends Engine {
         const anim = sheet.getAnimationForAll(game, 500);
         newMold(this, anim, this.assets.moldDed, this.assets.moldParty, () => {
           this.moldcount -= 1;
+          this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
         });
       }
     });
@@ -163,6 +166,8 @@ export class Game extends Engine {
       scoreBg.color = Color.Black;
       this.scoreLabel = new Label('Hello world', 0, 5, 'monospace');
       this.scoreLabel.color = Color.White;
+      this.moldLabel = new Label('Hello world', 100, 5, 'monospace');
+      this.moldLabel.color = Color.White;
 
       const player = new Player(
         //new Vector((width + 700) / 2, (height + 700) / 2),
@@ -172,6 +177,7 @@ export class Game extends Engine {
         this.assets.mouseEat
       );
       scoreBg.add(this.scoreLabel);
+      scoreBg.add(this.moldLabel);
       player.add(scoreBg);
       this.tileMap.deleteCheese(
         this.tileMap.cheeseAt((width + 700) / 2, (height + 700) / 2)!
