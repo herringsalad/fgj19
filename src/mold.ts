@@ -1,4 +1,4 @@
-import { Actor, Color, Engine, Vector } from 'excalibur';
+import {Actor, Color, Engine, Vector} from 'excalibur';
 import {CheeseCell} from "./cheeseBlocks";
 
 export class Mold extends Actor {
@@ -25,20 +25,25 @@ export class Mold extends Actor {
     super.update(engine, delta);
     const targetCheese = this.findCheese(this);
     if (targetCheese) {
-      this.target = new Vector(targetCheese.x + 8, targetCheese.y + 8);
+      this.target = new Vector(targetCheese.x + 16, targetCheese.y + 16);
 
       const direction = this.target.sub(this.pos);
       this.vel = direction.normalize().scale(this.speed);
       this.time += delta;
-      if (direction.magnitude() > 50) {
-        this.vel.addEqual(
-          this.vel
-            .perpendicular()
-            .scale(Math.sin(this.time / 1000 + this.id))
-            .scale(1 / 3)
-        );
+      if (this.target.sub(this.pos).magnitude() < 40) {
+        targetCheese.consume(delta / 100);
       }
+    } else {
+      this.vel = new Vector(Math.random() - 0.5, Math.random() - 0.5)
+        .normalize()
+        .scale(this.speed);
     }
+    this.vel.addEqual(
+      this.vel
+        .perpendicular()
+        .scale(Math.sin(this.time / 1000 + this.id))
+        .scale(1 / 3)
+    );
   }
 
   onClick(evt) {
