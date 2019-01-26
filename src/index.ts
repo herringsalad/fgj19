@@ -1,6 +1,6 @@
 import * as ex from 'excalibur';
-import {Engine, EventTypes, Label, PostUpdateEvent, Vector} from 'excalibur';
-import {Mold, newMold} from './mold';
+import {Engine, EventTypes, Label, PostUpdateEvent, SpriteSheet, TileMap, TileSprite, Vector} from 'excalibur';
+import {newMold} from './mold';
 import {Player} from './player';
 import {CheeseMap} from './cheeseMap';
 
@@ -25,6 +25,7 @@ export class Game extends Engine {
     bgTilefile: new ex.Texture('/assets/Tausta tiles.png'),
     moldTilefile: new ex.Texture('/assets/Home kolo tiles.png'),
     semimoldTilefile: new ex.Texture('/assets/Semihome kolo tiles.png'),
+    bgFile: new ex.Texture('/assets/Lattia tiles.png'),
     moldTexture: new ex.Texture('/assets/Itiö sprites (10x10).png'),
     mouseTexture: new ex.Texture('/assets/Mouse sprites.png'),
     music: new ex.Sound('/assets/juustoa.ogg'),
@@ -93,7 +94,6 @@ export class Game extends Engine {
         const sheet = new ex.SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
         const anim = sheet.getAnimationForAll(game, 500);
         newMold(this, anim, () => {
-          console.log("mold kill");
           this.moldcount -= 1;
         });
       }
@@ -103,7 +103,24 @@ export class Game extends Engine {
     const loader = new ex.Loader([
       ...Object.keys(this.assets).map(textureName => this.assets[textureName])
     ]);
+
     return super.start(loader).then(() => {
+
+      const bgSize = 128;
+      const bg = new TileMap({
+        x: -700, y: -700, cellWidth: 32, cellHeight: 32,
+        rows: bgSize, cols: bgSize
+      });
+      const bgTiles = new SpriteSheet(game.assets.bgFile, 1, 1, 32, 32);
+      bg.registerSpriteSheet('wood', bgTiles);
+      for (let i = 0; i < bgSize; i++) {
+        for (let h = 0; h < bgSize; h++) {
+          bg.getCellByIndex(i * bgSize + h)
+            .pushSprite(new TileSprite('wood', 0));
+        }
+      }
+      this.add(bg);
+
       this.tileMap = new CheeseMap(this, {
         x: 0,
         y: 0,
@@ -114,6 +131,7 @@ export class Game extends Engine {
       });
       this.add(this.tileMap);
 
+
       this.scoreLabel = new Label('Hello world', -10, -10, '10px Arial');
       this.add(this.scoreLabel);
 
@@ -122,7 +140,6 @@ export class Game extends Engine {
         this.assets.mouseTexture,
         this.tileMap.eatCheese,
         this.tileMap
-
       );
       game.currentScene.camera.strategy.lockToActor(player);
 
