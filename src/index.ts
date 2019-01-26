@@ -59,10 +59,10 @@ export class Game extends Engine {
     goodendmusic: new Sound('/assets/sounds/loppujuustoa.ogg'),
     badendmusic: new Sound('/assets/sounds/luuserijuustoa.ogg'),
 
-    mouseSqueak: new Sound('assets/sounds/Hiirulainen.wav'),
-    mouseEat: new Sound('assets/sounds/MumsMums.wav'),
-    moldParty: new Sound('assets/sounds/Homeitio.wav'),
-    moldDed: new Sound('assets/sounds/HomePois.wav')
+    mouseSqueak: new Sound('assets/sounds/hiirulainen.ogg'),
+    mouseEat: new Sound('assets/sounds/mumsmums.ogg'),
+    moldParty: new Sound('assets/sounds/homeitio.ogg'),
+    moldDed: new Sound('assets/sounds/homepois.ogg')
   };
 
   rows = 20;
