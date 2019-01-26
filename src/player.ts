@@ -55,13 +55,13 @@ export class Player extends Actor {
     dy: number
   ) {
     // try finding nearby cell in movement dir
-    const cell = engine.currentScene.tileMaps[0].getCellByPoint(
+    const cell: CheeseCell = engine.currentScene.tileMaps[0].getCellByPoint(
       this.pos.x + dx + 20 + xVelocity * 32,
       this.pos.y + dy - 20 + yVelocity * 32
-    );
+    ) as CheeseCell;
 
     // if solid cell found, dinner time :-)
-    if (cell && cell.solid) {
+    if (cell && cell.solid && cell.moldiness < 100) {
       this.eatCheese(cell);
     }
   }
