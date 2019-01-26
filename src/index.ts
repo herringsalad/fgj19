@@ -14,7 +14,7 @@ import {
   TileSprite,
   Vector
 } from 'excalibur';
-import {newMold} from './mold';
+import {Mold, newMold} from './mold';
 import {Player} from './player';
 import {CheeseMap} from './cheeseMap';
 import {Splash} from './loader';
@@ -51,6 +51,8 @@ export class Game extends Engine {
 
     deadMouse: new Texture('/assets/images/Restrat big.png'),
     homeover: new Texture('/assets/images/Game over.png'),
+    fatMouse: new Texture('/assets/images/Fatstart big.png'),
+    moldover: new Texture('/assets/images/Mold over.png'),
 
     music: new Sound('/assets/sounds/juustoa.ogg'),
     moldmusic: new Sound('/assets/sounds/homejuustoa.ogg'),
@@ -73,6 +75,7 @@ export class Game extends Engine {
   moldLabel: Label;
   particleEmitter: ParticleEmitter;
   player: Player;
+  molds: Mold[] = [];
 
   constructor() {
     super({
@@ -130,12 +133,13 @@ export class Game extends Engine {
         }
         const sheet = new SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
         const anim = sheet.getAnimationForAll(game, 500);
-        newMold(this, anim, this.assets.moldDed, this.assets.moldParty, () => {
+        this.molds.push(newMold(this, anim, this.assets.moldDed, this.assets.moldParty, () => {
           this.moldcount -= 1;
           this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
-        });
+        }));
       } else if (!this.tileMap.hasCheese()) {
         game.player.kill();
+        this.molds.forEach(mold => mold.emit('stopsound'));
         game.off(EventTypes.PostUpdate);
         this.endScreen();
       }

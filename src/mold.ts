@@ -15,7 +15,9 @@ export const newMold = (game: Game, anim: Animation, killSound: Sound, moldParty
   } else {
     pos = new Vector(Math.random() * game.width, game.height * 2);
   }
-  game.add(new Mold(pos, Math.random() * 10 + 50, anim, killSound, moldPartySound, onKill));
+  const mold = new Mold(pos, Math.random() * 10 + 50, anim, killSound, moldPartySound, onKill);
+  game.add(mold);
+  return mold;
 };
 
 export class Mold extends Actor {
@@ -44,12 +46,15 @@ export class Mold extends Actor {
     this.killSound = killSound;
     this.on(EventTypes.PreCollision, event => {
       if (event!.other instanceof Player) {
+        this.partySound.volume = 0;
+        this.killSound.volume = 0;
+        this.partySound.stop();
         onKill();
         this.kill();
       }
     });
 
-    this.on(EventTypes.Kill, () => {
+    this.on('stopsound', () => {
       this.partySound.volume = 0;
       this.killSound.volume = 0;
       this.partySound.stop();
