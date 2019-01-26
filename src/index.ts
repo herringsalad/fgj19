@@ -14,8 +14,8 @@ import { CheeseMap } from './cheeseMap';
 const width = 1280;
 const height = 1080;
 
-const moldmusicvol = 0.7;
-const musicvol = 1;
+const moldmusicvol = 0 // 0.7;
+const musicvol = 0 //1;
 
 export class Game extends Engine {
   width = 1280;
@@ -24,7 +24,7 @@ export class Game extends Engine {
   assets = {
     fgTilefile: new ex.Texture('/assets/Kolo tiles.png'),
     bgTilefile: new ex.Texture('/assets/Tausta tiles.png'),
-    moldTilefile: new ex.Texture('/assets/Tausta tiles.png'),
+    moldTilefile: new ex.Texture('/assets/Home kolo tiles.png'),
     mouseTexture: new ex.Texture('/assets/mouse.png'),
     music: new ex.Sound('/assets/juustoa.ogg'),
     moldmusic: new ex.Sound('/assets/homejuustoa.ogg')
@@ -86,33 +86,32 @@ export class Game extends Engine {
       }
     });
 
-    this.tileMap = new CheeseMap(this, {
-      x: 0,
-      y: 0,
-      cellWidth: 32,
-      cellHeight: 32,
-      rows: this.rows * 2,
-      cols: this.cols * 2
-    });
-
-    this.add(this.tileMap);
-
-    const player = new Player(
-      new Vector(300, 300),
-      this.assets.mouseTexture,
-      this.tileMap.eatCheese,
-      this.tileMap
-    );
-    game.currentScene.camera.strategy.lockToActor(player);
-
-    this.add(player);
     // Loads all assets
     const loader = new ex.Loader([
       ...Object.keys(this.assets).map(textureName => this.assets[textureName])
     ]);
-
-    // Start game
     return super.start(loader).then(() => {
+      this.tileMap = new CheeseMap(this, {
+        x: 0,
+        y: 0,
+        cellWidth: 32,
+        cellHeight: 32,
+        rows: this.rows * 2,
+        cols: this.cols * 2
+      });
+      this.add(this.tileMap);
+
+      const player = new Player(
+        new Vector(300, 300),
+        this.assets.mouseTexture,
+        this.tileMap.eatCheese,
+        this.tileMap
+      );
+      game.currentScene.camera.strategy.lockToActor(player as any);
+
+      this.add(player as any);
+
+      // Start game
       this.assets.music.play();
       this.assets.moldmusic.play();
       this.assets.music.loop = true;

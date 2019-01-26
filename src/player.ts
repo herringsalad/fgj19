@@ -31,11 +31,24 @@ export class Player extends Actor {
     this.biteSize = 20;
     this.collisionType = CollisionType.Active;
     this.collisionArea = new CircleArea({ pos: new Vector(0, 0), radius: 20 });
+    //this.collisionArea = new PolygonArea({
+    //  points: [
+    //    new Vector(-20, -20),
+    //    new Vector(-20, 60),
+    //    new Vector(60, 60),
+    //    new Vector(60, -20),
+    //  ]
+    //});
     this.eatCheese = eatCheese;
 
     // make player hitbox smaller
     this.setWidth(this.getWidth() * .3);
     this.setHeight(this.getHeight() * .3);
+
+    //this.on(EventTypes.PreCollision, e => {
+    //  console.log("precoll")
+    //  e.actor.vel = e.actor.vel.scale(-1);
+    //})
   }
 
   onInitialize(engine: Engine) {
@@ -73,7 +86,7 @@ export class Player extends Actor {
     super.draw(ctx, delta);
 
     // draw player hitbox
-    this.getBounds().debugDraw(ctx, Color.fromRGB(0,255,0,.5));
+    this.getBounds().debugDraw(ctx, Color.fromRGB(0, 255, 0, .5));
   }
 
   update(engine: Game, delta: number) {

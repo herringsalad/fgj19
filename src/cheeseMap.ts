@@ -16,6 +16,8 @@ export class CheeseCell extends Cell {
   public moldiness: number;
   dataX: number;
   dataY: number;
+  tileX: number;
+  tileY: number;
   eatCheese: (cell: Cell) => void;
   moldCheese: (cell: Cell) => void;
 
@@ -32,8 +34,10 @@ export class CheeseCell extends Cell {
     this.moldiness = 0;
     this.eatCheese = eatCheese;
     this.moldCheese = moldCheese;
-    this.dataX = x;
-    this.dataY = y;
+    this.tileX = x;
+    this.tileY = y;
+    this.dataX = Math.floor(x/2);
+    this.dataY = Math.floor(y/2);
   }
 
   consume(biteSize: number) {
@@ -63,6 +67,8 @@ export class CheeseMap extends TileMap {
   constructor(engine: Game, config: ITileMapArgs) {
     super(config);
 
+    this.drawCell = this.drawCell.bind(this);
+
     const fgTilesheet = new SpriteSheet(
       engine.assets.fgTilefile,
       5,
@@ -89,8 +95,8 @@ export class CheeseMap extends TileMap {
     this.registerSpriteSheet('mold', moldTilesheet);
 
     const cheeseCenter = new Vector(
-      Math.floor(config.rows / 2),
-      Math.floor(config.cols / 2)
+      Math.floor(config.rows / 4),
+      Math.floor(config.cols / 4)
     );
     const cheeseMaxRadius = 5;
     const maxDistance = new Vector(
@@ -102,19 +108,18 @@ export class CheeseMap extends TileMap {
     this.moldData = [];
     this.background = [];
 
-    for (let col = 0; col < config.cols; col++) {
+    for (let col = 0; col < config.cols/2; col++) {
       this.mapdata[col] = [];
       this.moldData[col] = [];
       this.background[col] = [];
-      for (let row = 0; row < config.cols; row++) {
+      for (let row = 0; row < config.cols/2; row++) {
         const distance =
           cheeseCenter.sub(new Vector(row, col)).magnitude() > maxDistance
             ? 1
             : 0;
         this.mapdata[col][row] =
-          cheeseStructure.perlin(new Vector(row * 2, col * 2).scale(1 / 64)) -
-            distance >
-          0.5;
+          cheeseStructure.perlin(new Vector(row, col).scale(1 / 64)) -
+            distance > 0.5;
         this.background[col][row] = !distance;
         this.moldData[col][row] = false;
       }
@@ -137,8 +142,8 @@ export class CheeseMap extends TileMap {
               height: config.cellHeight,
               index: i + j * config.cols
             },
-            Math.floor(i / 2),
-            Math.floor(j / 2),
+            i,
+            j,
             100,
             this.eatCheese,
             this.moldCheese
@@ -152,12 +157,13 @@ export class CheeseMap extends TileMap {
   }
 
   drawCell = (cell: CheeseCell) => {
-    const y = Math.floor(cell.index / this.fgTiles.length);
-    const x = cell.index % this.fgTiles.length;
-    cell.solid = this.fgTiles[y][x] != 6;
+    const y = cell.tileY;
+    const x = cell.tileX;
+    cell.solid = this.mapdata[cell.dataY][cell.dataX];
+    //console.log(this.moldTiles[y][x])
     cell.pushSprite(new TileSprite('background', this.bgTiles[y][x]));
     cell.pushSprite(new TileSprite('default', this.fgTiles[y][x]));
-    cell.pushSprite(new TileSprite('background', this.moldTiles[y][x]));
+    cell.pushSprite(new TileSprite('mold', this.moldTiles[y][x]));
   };
 
   eatCheese = (cell: CheeseCell) => {
@@ -205,7 +211,7 @@ export class CheeseMap extends TileMap {
     return targetCheese;
   };
 
-  hasCheese() {
+  hasCheese = () => {
     return this.data.some(cheese => cheese.solid && cheese.moldiness < 100);
   }
 }

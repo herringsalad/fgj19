@@ -39,9 +39,8 @@ export class Mold extends Actor {
 
   update(game: Game, delta: number): void {
     super.update(game, delta);
-    const targetCheese = game.findCheese(this.pos);
     if (!this.targetCheese) {
-      this.targetCheese = this.findCheese(this.pos);
+      this.targetCheese = game.findCheese(this.pos);
       console.log("updating cheesetarget");
     }
     if (this.targetCheese && this.targetCheese.hp === 0) {
@@ -49,8 +48,8 @@ export class Mold extends Actor {
       this.targetCheese = this.findCheese(this.pos);
       this.target = new Vector(this.targetCheese!.x + 16, this.targetCheese!.y + 16);
     } 
-    if (targetCheese) {
-      this.target = new Vector(targetCheese.x + 16, targetCheese.y + 16);
+    if (this.targetCheese) {
+      this.target = new Vector(this.targetCheese.x + 16, this.targetCheese.y + 16);
 
       const direction = this.target.sub(this.pos);
 
