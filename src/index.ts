@@ -91,7 +91,7 @@ export class Game extends Engine {
           game.once(EventTypes.PostUpdate, this.modVolume);
         }
         const sheet = new ex.SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
-        const anim = sheet.getAnimationForAll(game, 125);
+        const anim = sheet.getAnimationForAll(game, 500);
         newMold(this, anim, () => {
           console.log("mold kill");
           this.moldcount -= 1;
