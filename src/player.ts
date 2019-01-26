@@ -34,15 +34,6 @@ export class Player extends Actor {
   }
 
   onInitialize(engine: Engine) {
-    let poly = new Polygon([
-      new Vector(0, 0),
-      new Vector(0, 40),
-      new Vector(40, 40),
-      new Vector(40, 0)
-    ]);
-    poly.lineWidth = 2;
-    poly.lineColor = Color.Gray;
-    this.addDrawing('polygon', poly);
     this.addDrawing('mouse', this.texture.asSprite());
   }
 
