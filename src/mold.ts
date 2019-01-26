@@ -3,7 +3,7 @@ import { CheeseCell } from './cheeseMap';
 import { Game } from '.';
 import { Player } from './player';
 
-export const newMold = (game: Game, anim: Animation, moldPartySound: Sound, onKill: () => void) => {
+export const newMold = (game: Game, anim: Animation, killSound: Sound, moldPartySound: Sound, onKill: () => void) => {
   const rand = Math.random();
   let pos: Vector;
   if (rand < 0.25) {
@@ -15,7 +15,7 @@ export const newMold = (game: Game, anim: Animation, moldPartySound: Sound, onKi
   } else {
     pos = new Vector(Math.random() * game.width, game.height * 2);
   }
-  game.add(new Mold(pos, Math.random() * 10 + 50, anim, moldPartySound, onKill));
+  game.add(new Mold(pos, Math.random() * 10 + 50, anim, killSound, moldPartySound, onKill));
 };
 
 export class Mold extends Actor {
@@ -27,8 +27,9 @@ export class Mold extends Actor {
   time: number;
   targetMoldiness: number;
   partySound: Sound;
+  killSound: Sound;
 
-  constructor(pos: Vector, speed, moldTexture: Animation, moldPartySound, onKill: () => void) {
+  constructor(pos: Vector, speed, moldTexture: Animation, killSound, moldPartySound, onKill: () => void) {
     super(pos.x, pos.y, 20, 20);
     this.addDrawing('stock', moldTexture);
     this.target = new Vector(400, 300);
@@ -40,6 +41,7 @@ export class Mold extends Actor {
     this.time = 0;
     this.targetMoldiness = this.id > 5 ? 50 : 100;
     this.partySound = moldPartySound;
+    this.killSound = killSound;
     this.on(EventTypes.PreCollision, event => {
       if (event!.other instanceof Player) {
         onKill();
@@ -53,6 +55,10 @@ export class Mold extends Actor {
       this.partySound.loop = true;
       this.partySound.play(.1);
     }
+  }
+
+  onPreKill() {
+    this.killSound.play(.2);
   }
 
   update(game: Game, delta: number): void {
