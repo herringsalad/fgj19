@@ -1,8 +1,7 @@
-import * as ex from 'excalibur';
-import {Animation, Actor, CollisionType, EventTypes, Vector} from 'excalibur';
-import {CheeseCell} from './cheeseMap';
-import {Game} from '.';
-import {Player} from "./player";
+import { Animation, Actor, CollisionType, EventTypes, Vector } from 'excalibur';
+import { CheeseCell } from './cheeseMap';
+import { Game } from '.';
+import { Player } from './player';
 
 export const newMold = (game: Game, anim: Animation, onKill: () => void) => {
   const rand = Math.random();
@@ -42,25 +41,35 @@ export class Mold extends Actor {
     this.on(EventTypes.PreCollision, event => {
       if (event!.other instanceof Player) {
         onKill();
-        this.kill()
+        this.kill();
       }
-    })
+    });
   }
 
   update(game: Game, delta: number): void {
     super.update(game, delta);
-    if (!this.targetCheese || !this.targetCheese.solid || this.targetCheese.moldiness > this.targetMoldiness) {
+    if (
+      !this.targetCheese ||
+      !this.targetCheese.solid ||
+      this.targetCheese.moldiness > this.targetMoldiness
+    ) {
       this.targetCheese = game.findCheese(this.pos, this.targetMoldiness);
       if (this.targetCheese) {
         this.targetCheese = game.findCheese(this.pos, 100);
       }
 
       if (this.targetCheese) {
-        this.target = new Vector(this.targetCheese!.x + 16, this.targetCheese!.y + 16);
+        this.target = new Vector(
+          this.targetCheese!.x + 16,
+          this.targetCheese!.y + 16
+        );
       }
     }
     if (this.targetCheese) {
-      this.target = new Vector(this.targetCheese.x + 16, this.targetCheese.y + 16);
+      this.target = new Vector(
+        this.targetCheese.x + 16,
+        this.targetCheese.y + 16
+      );
 
       const direction = this.target.sub(this.pos);
 

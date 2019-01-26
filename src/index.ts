@@ -1,8 +1,20 @@
-import * as ex from 'excalibur';
-import {Engine, EventTypes, Label, PostUpdateEvent, SpriteSheet, TileMap, TileSprite, Vector, ParticleEmitter} from 'excalibur';
-import {newMold} from './mold';
-import {Player} from './player';
-import {CheeseMap} from './cheeseMap';
+import {
+  Engine,
+  EventTypes,
+  Label,
+  PostUpdateEvent,
+  SpriteSheet,
+  TileMap,
+  TileSprite,
+  Vector,
+  ParticleEmitter,
+  Loader,
+  Texture,
+  Sound
+} from 'excalibur';
+import { newMold } from './mold';
+import { Player } from './player';
+import { CheeseMap } from './cheeseMap';
 
 const width = 1280;
 const height = 1080;
@@ -21,18 +33,18 @@ export class Game extends Engine {
   height = 1080;
 
   assets = {
-    fgTilefile: new ex.Texture('/assets/Kolo tiles.png'),
-    bgTilefile: new ex.Texture('/assets/Tausta tiles.png'),
-    moldTilefile: new ex.Texture('/assets/Home kolo tiles.png'),
-    cheeseParticles: new ex.Texture(
+    fgTilefile: new Texture('/assets/Kolo tiles.png'),
+    bgTilefile: new Texture('/assets/Tausta tiles.png'),
+    moldTilefile: new Texture('/assets/Home kolo tiles.png'),
+    cheeseParticles: new Texture(
       '/assets/Particulate cheese sprites (10x10).png'
     ),
-    semimoldTilefile: new ex.Texture('/assets/Semihome kolo tiles.png'),
-    bgFile: new ex.Texture('/assets/Lattia tiles.png'),
-    moldTexture: new ex.Texture('/assets/Itiö sprites (10x10).png'),
-    mouseTexture: new ex.Texture('/assets/Mouse sprites.png'),
-    music: new ex.Sound('/assets/juustoa.ogg'),
-    moldmusic: new ex.Sound('/assets/homejuustoa.ogg')
+    semimoldTilefile: new Texture('/assets/Semihome kolo tiles.png'),
+    bgFile: new Texture('/assets/Lattia tiles.png'),
+    moldTexture: new Texture('/assets/Itiö sprites (10x10).png'),
+    mouseTexture: new Texture('/assets/Mouse sprites.png'),
+    music: new Sound('/assets/juustoa.ogg'),
+    moldmusic: new Sound('/assets/homejuustoa.ogg')
   };
 
   rows = 20;
@@ -41,7 +53,7 @@ export class Game extends Engine {
   timer: number;
   moldcount = 0;
   score = 0;
-  scoreLabel: ex.Label;
+  scoreLabel: Label;
   particleEmitter: ParticleEmitter;
 
   constructor() {
@@ -95,7 +107,7 @@ export class Game extends Engine {
         if (this.moldcount == 25) {
           game.once(EventTypes.PostUpdate, this.modVolume);
         }
-        const sheet = new ex.SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
+        const sheet = new SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
         const anim = sheet.getAnimationForAll(game, 500);
         newMold(this, anim, () => {
           this.moldcount -= 1;
@@ -104,23 +116,27 @@ export class Game extends Engine {
     });
 
     // Loads all assets
-    const loader = new ex.Loader([
+    const loader = new Loader([
       ...Object.keys(this.assets).map(textureName => this.assets[textureName])
     ]);
 
     return super.start(loader).then(() => {
-
       const bgSize = 128;
       const bg = new TileMap({
-        x: -700, y: -700, cellWidth: 32, cellHeight: 32,
-        rows: bgSize, cols: bgSize
+        x: -700,
+        y: -700,
+        cellWidth: 32,
+        cellHeight: 32,
+        rows: bgSize,
+        cols: bgSize
       });
       const bgTiles = new SpriteSheet(game.assets.bgFile, 1, 1, 32, 32);
       bg.registerSpriteSheet('wood', bgTiles);
       for (let i = 0; i < bgSize; i++) {
         for (let h = 0; h < bgSize; h++) {
-          bg.getCellByIndex(i * bgSize + h)
-            .pushSprite(new TileSprite('wood', 0));
+          bg.getCellByIndex(i * bgSize + h).pushSprite(
+            new TileSprite('wood', 0)
+          );
         }
       }
       this.add(bg);
@@ -134,7 +150,6 @@ export class Game extends Engine {
         cols: this.cols * 2
       });
       this.add(this.tileMap);
-
 
       this.scoreLabel = new Label('Hello world', -10, -10, '10px Arial');
       this.add(this.scoreLabel);
