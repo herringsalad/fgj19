@@ -64,8 +64,8 @@ const bgTilefile = new ex.Texture('/assets/Tausta tiles.png');
 const mouseTexture = new ex.Texture('/assets/mouse.png');
 const loader = new ex.Loader([fgTilefile, bgTilefile, mouseTexture]);
 const tileMapCollision = new TileMapCollisionDetection();
-const rows = 40;
-const cols = 40;
+const rows = 20;
+const cols = 20;
 
 const cheeseCenter = new Vector(Math.floor(rows / 2), Math.floor(cols / 2));
 const cheeseMaxRadius = 5;
