@@ -1,15 +1,7 @@
-import {
-  Cell,
-  ICellArgs,
-  ITileMapArgs,
-  TileMap,
-  TileSprite,
-  Vector,
-  SpriteSheet
-} from 'excalibur';
-import { getTiles } from './tilebuilder';
+import {Cell, ICellArgs, ITileMapArgs, SpriteSheet, TileMap, TileSprite, Vector} from 'excalibur';
+import {getTiles} from './tilebuilder';
 import * as cheeseStructure from './cheeseBuilder';
-import { Game } from '.';
+import {Game} from '.';
 
 export class CheeseCell extends Cell {
   public hp: number;
@@ -21,7 +13,7 @@ export class CheeseCell extends Cell {
   game: Game;
 
   constructor(game: Game, config: ICellArgs, x: number, y: number, hp = 100) {
-    super({ sprites: [], ...config });
+    super({sprites: [], ...config});
     this.game = game;
     this.hp = hp;
     this.moldiness = 0;
@@ -39,12 +31,14 @@ export class CheeseCell extends Cell {
       this.game.tileMap.eatCheese(this);
     }
   }
-  mold() {
-    this.moldiness += 1;
-    if (this.moldiness == 50) {
+
+  mold(delta: number) {
+    const prev = this.moldiness;
+    this.moldiness += delta/50;
+    if (this.moldiness > 50 && prev < 50) {
       this.game.tileMap.moldCheese(this);
     }
-    if (this.moldiness == 100) {
+    if (this.moldiness > 100 && prev < 100) {
       this.game.tileMap.moldCheese(this);
     }
   }
@@ -113,7 +107,7 @@ export class CheeseMap extends TileMap {
             : 0;
         this.mapdata[col][row] =
           cheeseStructure.perlin(new Vector(row, col).scale(1 / 64)) -
-            distance >
+          distance >
           0.5;
         this.background[col][row] = !distance;
         this.moldData[col][row] = false;
@@ -190,8 +184,8 @@ export class CheeseMap extends TileMap {
     const cell = this.getCellByPoint(x, y);
 
     return this.data[
-      cell.x / cell.width + (cell.y / cell.height) * this.config.rows
-    ];
+    cell.x / cell.width + (cell.y / cell.height) * this.config.rows
+      ];
   };
 
   findCheese = (pos: Vector, maxMold: number): CheeseCell | undefined => {

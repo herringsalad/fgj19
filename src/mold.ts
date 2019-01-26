@@ -55,7 +55,7 @@ export class Mold extends Actor {
       this.vel = direction.normalize().scale(this.speed);
       this.time += delta;
       if (this.targetCheese && this.target.sub(this.pos).magnitude() < 40) {
-        this.targetCheese.mold();
+        this.targetCheese.mold(delta);
       }
       this.vel.addEqual(
         this.vel
