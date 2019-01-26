@@ -121,16 +121,16 @@ export class Game extends Engine {
     ]);
 
     return super.start(loader).then(() => {
-      const bgSize = 128;
+      const bgSize = 64;
       const bg = new TileMap({
         x: -700,
         y: -700,
-        cellWidth: 32,
-        cellHeight: 32,
+        cellWidth: 64,
+        cellHeight: 64,
         rows: bgSize,
         cols: bgSize
       });
-      const bgTiles = new SpriteSheet(game.assets.bgFile, 1, 1, 32, 32);
+      const bgTiles = new SpriteSheet(game.assets.bgFile, 1, 1, 64, 64);
       bg.registerSpriteSheet('wood', bgTiles);
       for (let i = 0; i < bgSize; i++) {
         for (let h = 0; h < bgSize; h++) {
