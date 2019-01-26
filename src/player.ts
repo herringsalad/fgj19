@@ -18,12 +18,7 @@ import {
 import { Game } from './';
 import { CheeseMap } from './cheeseMap';
 
-enum Direction {
-  Up,
-  Down,
-  Left,
-  Right
-}
+type Direction = 'Up' | 'Down' | 'Left' | 'Right';
 
 export class Player extends Actor {
   texture: Texture;
@@ -46,6 +41,11 @@ export class Player extends Actor {
       super._postupdate(engine, delta);
       this.pos.x = Math.floor(this.pos.x);
       this.pos.y = Math.floor(this.pos.y);
+
+      this.pos.x = Math.max(this.pos.x, 65);
+      this.pos.x = Math.min(this.pos.x, 1200);
+      this.pos.y = Math.max(this.pos.y, 65);
+      this.pos.y = Math.min(this.pos.y, 1200);
     };
 
     this.texture = texture;
@@ -186,35 +186,61 @@ export class Player extends Actor {
     let xVelocity = 0;
     let yVelocity = 0;
 
+    // Store last pressed input
     if (engine.input.keyboard.wasPressed(Input.Keys.Up))
-      this.lastDirectionPressed = Direction.Up;
+      this.lastDirectionPressed = 'Up';
     if (engine.input.keyboard.wasPressed(Input.Keys.Down))
-      this.lastDirectionPressed = Direction.Down;
+      this.lastDirectionPressed = 'Down';
     if (engine.input.keyboard.wasPressed(Input.Keys.Left))
-      this.lastDirectionPressed = Direction.Left;
+      this.lastDirectionPressed = 'Left';
     if (engine.input.keyboard.wasPressed(Input.Keys.Right))
-      this.lastDirectionPressed = Direction.Right;
+      this.lastDirectionPressed = 'Right';
 
+    // If last pressed input was released, reset last pressed button
     if (
-      !engine.input.keyboard.isHeld(Input.Keys.Up) &&
-      !engine.input.keyboard.isHeld(Input.Keys.Down) &&
-      !engine.input.keyboard.isHeld(Input.Keys.Left) &&
-      !engine.input.keyboard.isHeld(Input.Keys.Right)
+      (this.lastDirectionPressed === 'Up' &&
+        engine.input.keyboard.wasReleased(Input.Keys.Up)) ||
+      (this.lastDirectionPressed === 'Down' &&
+        engine.input.keyboard.wasReleased(Input.Keys.Down)) ||
+      (this.lastDirectionPressed === 'Left' &&
+        engine.input.keyboard.wasReleased(Input.Keys.Left)) ||
+      (this.lastDirectionPressed === 'Right' &&
+        engine.input.keyboard.wasReleased(Input.Keys.Right))
     ) {
       this.lastDirectionPressed = undefined;
     }
 
-    if (this.lastDirectionPressed == Direction.Up && this.pos.y > 65) {
-      yVelocity -= 1;
-    }
-    if (this.lastDirectionPressed == Direction.Down && this.pos.y < 1200) {
-      yVelocity += 1;
-    }
-    if (this.lastDirectionPressed == Direction.Left && this.pos.x > 65) {
-      xVelocity -= 1;
-    }
-    if (this.lastDirectionPressed == Direction.Right && this.pos.x < 1200) {
-      xVelocity += 1;
+    if (this.lastDirectionPressed) {
+      // If we still have a last pressed direction, move in that dir
+      switch (this.lastDirectionPressed) {
+        case 'Up': {
+          yVelocity -= 1;
+          break;
+        }
+        case 'Down': {
+          yVelocity += 1;
+          break;
+        }
+        case 'Left': {
+          xVelocity -= 1;
+          break;
+        }
+        case 'Right': {
+          xVelocity += 1;
+          break;
+        }
+      }
+    } else {
+      // Otherwise move in whatever dir is pressed
+      if (engine.input.keyboard.isHeld(Input.Keys.Up)) {
+        yVelocity -= 1;
+      } else if (engine.input.keyboard.isHeld(Input.Keys.Down)) {
+        yVelocity += 1;
+      } else if (engine.input.keyboard.isHeld(Input.Keys.Left)) {
+        xVelocity -= 1;
+      } else if (engine.input.keyboard.isHeld(Input.Keys.Right)) {
+        xVelocity += 1;
+      }
     }
 
     if (!xVelocity && !yVelocity) {
