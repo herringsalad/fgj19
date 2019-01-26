@@ -7,8 +7,8 @@ import * as cheeseStructure from './cheeseBuilder';
 import { getTiles } from './tilebuilder';
 import { CheeseCell, CheeseMap } from './cheeseBlocks';
 
-const width = 800;
-const height = 600;
+const width = 1280;
+const height = 1080;
 
 const game = new ex.Engine({ width, height });
 
@@ -42,22 +42,14 @@ const mapdata = [];
 for (let col = 0; col < cols; col++) {
   mapdata[col] = [];
   for (let row = 0; row < cols; row++) {
-    mapdata[col][row] = (cheeseStructure.perlin(new Vector(row * 2, col * 2).scale(1/64)) > .6);
-// let spriteTiles = new ex.SpriteSheet(tileSheet, 1, 1, 64, 64);
-// tm.registerSpriteSheet('default', spriteTiles);
-// tm.data.forEach((cell: CheeseCell) => {
-//   if (cheeseStructure.centeredPerlin(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > .1) {
-//     cell.solid = true;
-//     cell.pushSprite(new ex.TileSprite('default', 0));
-//     // console.log(cell.hp);
+    mapdata[col][row] =
+      cheeseStructure.perlin(new Vector(row * 2, col * 2).scale(1 / 64)) > 0.6;
   }
 }
 
 let tiles = getTiles(mapdata);
 
 function drawCell(cell: CheeseCell) {
-  // console.log({'cellX': cell.x, 'cellY': cell.y});
-  //if (cheeseStructure.square(new Vector(cell.x, cell.y).scale(1/64), new Vector(tm.rows/2, tm.cols/2), 5) > 0) {
   const y = Math.floor(cell.index / tiles.length);
   const x = cell.index % tiles.length;
   cell.solid = tiles[y][x] != 6;
@@ -76,14 +68,6 @@ const eatCheese = (cell: Cell) => {
   tm.data.forEach(cell => cell.clearSprites());
   tm.data.forEach(drawCell);
 };
-
-const rectangle = new ex.Actor(150, game.drawHeight - 40, 200, 20);
-rectangle.color = ex.Color.Yellow;
-rectangle.collisionType = ex.CollisionType.Fixed;
-
-game.input.pointers.primary.on('move', evt => {
-  rectangle.pos.x = (evt as any).worldPos.x;
-});
 
 game.start(loader).then(() => {
   game.add(tm);
