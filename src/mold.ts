@@ -7,9 +7,9 @@ export class Mold extends Actor {
   hp: number;
   id: number;
   time: number;
-  findCheese: (mold: Mold) => CheeseCell;
+  findCheese: (pos: Vector) => CheeseCell;
 
-  constructor(pos: Vector, findCheese: (mold: Mold) => CheeseCell, speed: number = 50) {
+  constructor(pos: Vector, findCheese: (pos: Vector) => CheeseCell, speed: number = 50) {
     super(pos.x, pos.y, 20, 20);
     this.color = Color.Blue;
     this.target = new Vector(400, 300);
@@ -23,7 +23,7 @@ export class Mold extends Actor {
 
   update(engine: Engine, delta: number): void {
     super.update(engine, delta);
-    const targetCheese = this.findCheese(this);
+    const targetCheese = this.findCheese(this.pos);
     if (targetCheese) {
       this.target = new Vector(targetCheese.x + 16, targetCheese.y + 16);
 
@@ -31,7 +31,7 @@ export class Mold extends Actor {
       this.vel = direction.normalize().scale(this.speed);
       this.time += delta;
       if (this.target.sub(this.pos).magnitude() < 40) {
-        targetCheese.consume(delta / 100);
+        targetCheese.mold();
       }
     } else {
       this.vel = new Vector(Math.random() - 0.5, Math.random() - 0.5)

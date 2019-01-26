@@ -12,8 +12,8 @@ const height = 1080;
 
 const game = new ex.Engine({width, height});
 
-const findCheese = (mold: Mold) => {
-  return tm.findCheese(mold.pos);
+const findCheese = (pos: Vector) => {
+  return tm.findCheese(pos);
 };
 
 const newMold = () => {
@@ -37,6 +37,7 @@ function drawCell(cell: CheeseCell) {
   cell.solid = fgTiles[y][x] != 6;
   cell.pushSprite(new ex.TileSprite('background', bgTiles[y][x]));
   cell.pushSprite(new ex.TileSprite('default', fgTiles[y][x]));
+  cell.pushSprite(new ex.TileSprite('background', moldTiles[y][x]));
 }
 
 const eatCheese = (cell: CheeseCell) => {
@@ -45,6 +46,15 @@ const eatCheese = (cell: CheeseCell) => {
   cell.solid = false;
   mapdata[y][x] = false;
   fgTiles = getTiles(mapdata);
+  tm.data.forEach(cell => cell.clearSprites());
+  tm.data.forEach(drawCell);
+};
+
+const moldCheese = (cell: CheeseCell) => {
+  const y = cell.dataY;
+  const x = cell.dataX;
+  moldData[y][x] = true;
+  moldTiles = getTiles(moldData);
   tm.data.forEach(cell => cell.clearSprites());
   tm.data.forEach(drawCell);
 };
@@ -61,6 +71,7 @@ game.on(EventTypes.PostUpdate, event => {
 
 const fgTilefile = new ex.Texture('/assets/Kolo tiles.png');
 const bgTilefile = new ex.Texture('/assets/Tausta tiles.png');
+const moldTilefile = new ex.Texture('/assets/Tausta tiles.png');
 const mouseTexture = new ex.Texture('/assets/mouse.png');
 const loader = new ex.Loader([fgTilefile, bgTilefile, mouseTexture]);
 const tileMapCollision = new TileMapCollisionDetection();
@@ -78,12 +89,14 @@ const tm = new CheeseMap({
   cellHeight: 32,
   rows: rows * 2,
   cols: cols * 2
-}, eatCheese);
+}, eatCheese, moldCheese);
 
 const mapdata: boolean[][] = [];
+const moldData: boolean[][] = [];
 const background: boolean[][] = [];
 for (let col = 0; col < cols; col++) {
   mapdata[col] = [];
+  moldData[col] = [];
   background[col] = [];
   for (let row = 0; row < cols; row++) {
     const distance = cheeseCenter.sub(new Vector(row, col)).magnitude() > maxDistance ? 1 : 0;
@@ -91,19 +104,22 @@ for (let col = 0; col < cols; col++) {
       .perlin(new Vector(row * 2, col * 2)
         .scale(1 / 64)) - distance > 0.5;
     background[col][row] = !distance;
+    moldData[col][row] = false;
   }
 }
 
 let fgTiles = getTiles(mapdata);
 let bgTiles = getTiles(background);
+let moldTiles = getTiles(moldData);
 
 let fgTilesheet = new ex.SpriteSheet(fgTilefile, 5, 3, 32, 32);
 tm.registerSpriteSheet('default', fgTilesheet);
 let bgTilesheet = new ex.SpriteSheet(bgTilefile, 5, 3, 32, 32);
 tm.registerSpriteSheet('background', bgTilesheet);
+let moldTilesheet = new ex.SpriteSheet(moldTilefile, 5, 3, 32, 32);
+tm.registerSpriteSheet('mold', moldTilesheet);
 
 tm.data.forEach(drawCell);
-
 
 game.start(loader).then(() => {
   game.add(tm);
