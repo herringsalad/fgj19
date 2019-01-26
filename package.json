@@ -26,7 +26,8 @@
   },
   "lint-staged": {
     "*.{ts,json}": [
-      "prettier --write"
+      "prettier --write",
+      "git add"
     ]
   },
   "devDependencies": {
