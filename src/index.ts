@@ -1,22 +1,24 @@
 import {
+  Actor,
+  Color,
   Engine,
   EventTypes,
   Label,
   ParticleEmitter,
   PostUpdateEvent,
+  Scene,
+  Sound,
   SpriteSheet,
+  Texture,
   TileMap,
   TileSprite,
-  Vector,
-  Texture,
-  Sound,
-  Color,
-  Actor
+  Vector
 } from 'excalibur';
-import { newMold } from './mold';
-import { Player } from './player';
-import { CheeseMap } from './cheeseMap';
-import { Splash } from './loader';
+import {newMold} from './mold';
+import {Player} from './player';
+import {CheeseMap} from './cheeseMap';
+import {Splash} from './loader';
+import {EndScene} from "./endscene";
 
 const width = 1920 / 2;
 const height = 1080 / 2;
@@ -46,8 +48,15 @@ export class Game extends Engine {
     furniture: new Texture('/assets/images/Sisustus.png'),
     moldTexture: new Texture('/assets/images/Itiö sprites (10x10).png'),
     mouseTexture: new Texture('/assets/images/Mouse sprites.png'),
+
+    deadMouse: new Texture('/assets/images/Restrat big.png'),
+    homeover: new Texture('/assets/images/Game over.png'),
+
     music: new Sound('/assets/sounds/juustoa.ogg'),
     moldmusic: new Sound('/assets/sounds/homejuustoa.ogg'),
+    goodendmusic: new Sound('/assets/sounds/loppujuustoa.ogg'),
+    badendmusic: new Sound('/assets/sounds/luuserijuustoa.ogg'),
+
     mouseSqueak: new Sound('assets/sounds/Hiirulainen.wav'),
     mouseEat: new Sound('assets/sounds/MumsMums.wav'),
     moldParty: new Sound('assets/sounds/Homeitio.wav'),
@@ -124,6 +133,9 @@ export class Game extends Engine {
           this.moldcount -= 1;
           this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
         });
+      } else if (this.tileMap.hasCheese()) {
+        game.off(EventTypes.PostUpdate);
+        this.endScreen();
       }
     });
 
@@ -242,6 +254,14 @@ export class Game extends Engine {
       this.assets.music.loop = true;
       this.assets.moldmusic.loop = true;
     });
+  }
+
+  endScreen = () => {
+    this.assets.music.stop();
+    this.assets.moldmusic.stop();
+    const endscene = new EndScene(this);
+    this.addScene('end', endscene);
+    this.goToScene('end');
   }
 }
 
