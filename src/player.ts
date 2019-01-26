@@ -167,7 +167,7 @@ export class Player extends Actor {
       if (this.eatSound.instanceCount() === 0) {
         this.eatSound.play(0.5);
       }
-      cheese.consume(delta);
+      cheese.consume(delta * 2);
       return true;
     }
 
