@@ -4,7 +4,8 @@
   "description": "A Phaser 3 Project Template",
   "main": "src/index.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack && rm -rf public && mkdir -p public/build && cp build/project.bundle.js public/build && cp -r assets public && cp index.html public",
+    "deploy": "npm run build && surge -d fgj19.surge.sh public",
     "start": "npm run build && webpack-dev-server --port=8000",
     "format": "prettier --write src/**/*.ts **/*.json"
   },
