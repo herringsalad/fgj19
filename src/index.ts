@@ -1,24 +1,24 @@
 import {
-  Actor,
-  Color,
   Engine,
   EventTypes,
   Label,
   ParticleEmitter,
   PostUpdateEvent,
-  Sound,
   SpriteSheet,
-  Texture,
   TileMap,
   TileSprite,
-  Vector
+  Vector,
+  Texture,
+  Sound,
+  Color,
+  Actor
 } from 'excalibur';
-import {newMold} from './mold';
-import {Player} from './player';
-import {CheeseMap} from './cheeseMap';
-import {Splash} from './loader';
+import { newMold } from './mold';
+import { Player } from './player';
+import { CheeseMap } from './cheeseMap';
+import { Splash } from './loader';
 
-const width = 1280 / 2;
+const width = 1920 / 2;
 const height = 1080 / 2;
 
 /*
@@ -170,8 +170,8 @@ export class Game extends Engine {
       this.moldLabel.color = Color.White;
 
       const player = new Player(
-        //new Vector((width + 700) / 2, (height + 700) / 2),
-        new Vector(0, 0),
+        new Vector((width + 380) / 2, (height + 800) / 2),
+        // new Vector(0, 0),
         this.assets.mouseTexture,
         this.assets.mouseSqueak,
         this.assets.mouseEat
@@ -180,7 +180,7 @@ export class Game extends Engine {
       scoreBg.add(this.moldLabel);
       player.add(scoreBg);
       this.tileMap.deleteCheese(
-        this.tileMap.cheeseAt((width + 700) / 2, (height + 700) / 2)!
+        this.tileMap.cheeseAt((width + 380) / 2, (height + 800) / 2)!
       );
 
       game.currentScene.camera.strategy.lockToActor(player);
