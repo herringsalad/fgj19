@@ -3,6 +3,7 @@ import { CheeseCell } from './cheeseBlocks';
 
 export class Mold extends Actor {
   target: Vector;
+  targetCheese: CheeseCell;
   speed: number;
   hp: number;
   id: number;
@@ -27,15 +28,22 @@ export class Mold extends Actor {
 
   update(engine: Engine, delta: number): void {
     super.update(engine, delta);
-    const targetCheese = this.findCheese(this.pos);
-    if (targetCheese) {
-      this.target = new Vector(targetCheese.x + 16, targetCheese.y + 16);
-
+    if (!this.targetCheese) {
+      this.targetCheese = this.findCheese(this.pos);
+      console.log("updating cheesetarget");
+    }
+    if (this.targetCheese.hp === 0) {
+      console.log("updating cheesetarget");
+      this.targetCheese = this.findCheese(this.pos);
+      this.target = new Vector(this.targetCheese.x + 16, this.targetCheese.y + 16);
+    } 
+    if (this.targetCheese) {
       const direction = this.target.sub(this.pos);
+
       this.vel = direction.normalize().scale(this.speed);
       this.time += delta;
       if (this.target.sub(this.pos).magnitude() < 40) {
-        targetCheese.mold();
+        this.targetCheese.mold();
       }
     } else {
       this.vel = new Vector(Math.random() - 0.5, Math.random() - 0.5)
