@@ -28,9 +28,9 @@ export class Game extends Engine {
     moldTilefile: new ex.Texture('/assets/Home kolo tiles.png'),
     semimoldTilefile: new ex.Texture('/assets/Semihome kolo tiles.png'),
     moldTexture: new ex.Texture('/assets/Itiö sprites (10x10).png'),
-    mouseTexture: new ex.Texture('/assets/Mouse sprites (45x39).png'),
+    mouseTexture: new ex.Texture('/assets/Mouse sprites.png'),
     music: new ex.Sound('/assets/juustoa.ogg'),
-    moldmusic: new ex.Sound('/assets/homejuustoa.ogg'),
+    moldmusic: new ex.Sound('/assets/homejuustoa.ogg')
   };
 
   rows = 20;

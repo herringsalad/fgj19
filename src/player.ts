@@ -56,7 +56,7 @@ export class Player extends Actor {
   onInitialize(game: Engine) {
     this.spriteSheet = new SpriteSheet(this.texture, 1, 20, 39, 45);
 
-    const animSpeed = 150;
+    const animSpeed = 200;
 
     const idleLeft = this.spriteSheet.getAnimationBetween(
       game,
