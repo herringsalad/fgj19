@@ -157,8 +157,8 @@ export class Game extends Engine {
       this.scoreLabel = new Label('Hello world', -10, -10, '10px Arial');
       this.add(this.scoreLabel);
 
-      const player = new Player(new Vector(width/2, height/2), this.assets.mouseTexture, this.assets.mouseSqueak, this.assets.mouseEat);
-      this.tileMap.deleteCheese(this.tileMap.cheeseAt(width/2, height/2)!);
+      const player = new Player(new Vector(width/2, height/2 + 100), this.assets.mouseTexture, this.assets.mouseSqueak, this.assets.mouseEat);
+      this.tileMap.deleteCheese(this.tileMap.cheeseAt(width/2, height/2 + 100)!);
 
       game.currentScene.camera.strategy.lockToActor(player);
 
