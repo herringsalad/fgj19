@@ -1,16 +1,16 @@
 import * as ex from 'excalibur';
-import {Cell, EventTypes, Vector} from 'excalibur';
-import {Mold} from './mold';
-import {Player} from './player';
-import {TileMapCollisionDetection} from 'excalibur/dist/Traits/Index';
+import { Cell, EventTypes, Vector } from 'excalibur';
+import { Mold } from './mold';
+import { Player } from './player';
+import { TileMapCollisionDetection } from 'excalibur/dist/Traits/Index';
 import * as cheeseStructure from './cheeseBuilder';
-import {getTiles} from './tilebuilder';
-import {CheeseCell, CheeseMap} from './cheeseBlocks';
+import { getTiles } from './tilebuilder';
+import { CheeseCell, CheeseMap } from './cheeseBlocks';
 
 const width = 1280;
 const height = 1080;
 
-const game = new ex.Engine({width, height});
+const game = new ex.Engine({ width, height });
 
 const findCheese = (pos: Vector) => {
   return tm.findCheese(pos);
@@ -82,14 +82,18 @@ const cheeseCenter = new Vector(Math.floor(rows / 2), Math.floor(cols / 2));
 const cheeseMaxRadius = 5;
 const maxDistance = new Vector(cheeseMaxRadius, cheeseMaxRadius).magnitude();
 
-const tm = new CheeseMap({
-  x: 0,
-  y: 0,
-  cellWidth: 32,
-  cellHeight: 32,
-  rows: rows * 2,
-  cols: cols * 2
-}, eatCheese, moldCheese);
+const tm = new CheeseMap(
+  {
+    x: 0,
+    y: 0,
+    cellWidth: 32,
+    cellHeight: 32,
+    rows: rows * 2,
+    cols: cols * 2
+  },
+  eatCheese,
+  moldCheese
+);
 
 const mapdata: boolean[][] = [];
 const moldData: boolean[][] = [];
@@ -99,10 +103,12 @@ for (let col = 0; col < cols; col++) {
   moldData[col] = [];
   background[col] = [];
   for (let row = 0; row < cols; row++) {
-    const distance = cheeseCenter.sub(new Vector(row, col)).magnitude() > maxDistance ? 1 : 0;
-    mapdata[col][row] = cheeseStructure
-      .perlin(new Vector(row * 2, col * 2)
-        .scale(1 / 64)) - distance > 0.5;
+    const distance =
+      cheeseCenter.sub(new Vector(row, col)).magnitude() > maxDistance ? 1 : 0;
+    mapdata[col][row] =
+      cheeseStructure.perlin(new Vector(row * 2, col * 2).scale(1 / 64)) -
+        distance >
+      0.5;
     background[col][row] = !distance;
     moldData[col][row] = false;
   }

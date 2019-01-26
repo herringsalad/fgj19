@@ -1,5 +1,5 @@
-import {Actor, Color, Engine, Vector} from 'excalibur';
-import {CheeseCell} from "./cheeseBlocks";
+import { Actor, Color, Engine, Vector } from 'excalibur';
+import { CheeseCell } from './cheeseBlocks';
 
 export class Mold extends Actor {
   target: Vector;
@@ -9,7 +9,11 @@ export class Mold extends Actor {
   time: number;
   findCheese: (pos: Vector) => CheeseCell;
 
-  constructor(pos: Vector, findCheese: (pos: Vector) => CheeseCell, speed: number = 50) {
+  constructor(
+    pos: Vector,
+    findCheese: (pos: Vector) => CheeseCell,
+    speed: number = 50
+  ) {
     super(pos.x, pos.y, 20, 20);
     this.color = Color.Blue;
     this.target = new Vector(400, 300);

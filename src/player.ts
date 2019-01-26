@@ -10,14 +10,13 @@ import {
   Texture,
   Vector
 } from 'excalibur';
-import Vector2 = Phaser.Math.Vector2;
 
 import { CheeseCell } from './cheeseBlocks';
 
 export class Player extends Actor {
   texture: Texture;
   eatCheese: (cell: Cell) => void;
-  biteSize: number
+  biteSize: number;
   speed = 256;
 
   constructor(
@@ -39,7 +38,7 @@ export class Player extends Actor {
       new Vector(0, 0),
       new Vector(0, 40),
       new Vector(40, 40),
-      new Vector(40, 0),
+      new Vector(40, 0)
     ]);
     poly.lineWidth = 2;
     poly.lineColor = Color.Gray;
