@@ -27,8 +27,8 @@ export class Game extends Engine {
     bgTilefile: new ex.Texture('/assets/Tausta tiles.png'),
     moldTilefile: new ex.Texture('/assets/Home kolo tiles.png'),
     semimoldTilefile: new ex.Texture('/assets/Semihome kolo tiles.png'),
-    mouseTexture: new ex.Texture('/assets/mouse.png'),
     moldTexture: new ex.Texture('/assets/Itiö sprites (10x10).png'),
+    mouseTexture: new ex.Texture('/assets/Mouse sprites (45x39).png'),
     music: new ex.Sound('/assets/juustoa.ogg'),
     moldmusic: new ex.Sound('/assets/homejuustoa.ogg'),
   };
