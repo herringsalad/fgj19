@@ -84,6 +84,8 @@ export class Mold extends Actor {
           .scale(Math.sin(this.time / 1000 + this.id))
           .scale(1 / 3)
       );
+    } else {
+      this.kill();
     }
   }
 

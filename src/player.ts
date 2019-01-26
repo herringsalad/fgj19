@@ -152,16 +152,18 @@ export class Player extends Actor {
     let xVelocity = 0;
     let yVelocity = 0;
 
-    if (engine.input.keyboard.isHeld(Input.Keys.Up)) {
+    console.log(this.pos.x, this.pos.y);
+
+    if (engine.input.keyboard.isHeld(Input.Keys.Up) && this.pos.y > 65) {
       yVelocity -= 1;
     }
-    if (engine.input.keyboard.isHeld(Input.Keys.Down)) {
+    if (engine.input.keyboard.isHeld(Input.Keys.Down) && this.pos.y < 1200) {
       yVelocity += 1;
     }
-    if (engine.input.keyboard.isHeld(Input.Keys.Left)) {
+    if (engine.input.keyboard.isHeld(Input.Keys.Left) && this.pos.x > 65) {
       xVelocity -= 1;
     }
-    if (engine.input.keyboard.isHeld(Input.Keys.Right)) {
+    if (engine.input.keyboard.isHeld(Input.Keys.Right) && this.pos.x < 1200) {
       xVelocity += 1;
     }
 
