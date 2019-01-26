@@ -72,6 +72,7 @@ export class Game extends Engine {
   scoreLabel: Label;
   moldLabel: Label;
   particleEmitter: ParticleEmitter;
+  player: Player;
 
   constructor() {
     super({
@@ -134,6 +135,7 @@ export class Game extends Engine {
           this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
         });
       } else if (!this.tileMap.hasCheese()) {
+        game.player.kill();
         game.off(EventTypes.PostUpdate);
         this.endScreen();
       }
@@ -216,6 +218,7 @@ export class Game extends Engine {
       game.currentScene.camera.strategy.lockToActor(player);
 
       this.add(player);
+      this.player = player;
 
       const particleSprite = new SpriteSheet(
         this.assets.cheeseParticles,

@@ -1,4 +1,4 @@
-import {Actor, CollisionType, Engine, Input, Sound, SpriteSheet, Texture, Vector} from 'excalibur';
+import {Actor, CollisionType, Engine, EventTypes, Input, Sound, SpriteSheet, Texture, Vector} from 'excalibur';
 
 import {Game} from './';
 
@@ -42,6 +42,13 @@ export class Player extends Actor {
 
     this.squeak = squeak;
     this.eatSound = eatSound;
+
+    this.on(EventTypes.Kill, () => {
+      this.squeak.volume = 0;
+      this.eatSound.volume = 0;
+      this.squeak.stop();
+      this.eatSound.stop();
+    })
   }
 
   onInitialize(game: Engine) {

@@ -48,6 +48,12 @@ export class Mold extends Actor {
         this.kill();
       }
     });
+
+    this.on(EventTypes.Kill, () => {
+      this.partySound.volume = 0;
+      this.killSound.volume = 0;
+      this.partySound.stop();
+    })
   }
 
   onInitialize() {
