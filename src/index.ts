@@ -15,8 +15,8 @@ import {
 import { newMold } from './mold';
 import { Player } from './player';
 import { CheeseMap } from './cheeseMap';
-import {logo} from "./logo";
-import {Splash} from "./loader";
+import { logo } from './logo';
+import { Splash } from './loader';
 
 const width = 1280 / 2;
 const height = 1080 / 2;
@@ -67,6 +67,8 @@ export class Game extends Engine {
       width: width,
       height: height
     });
+
+    this.setAntialiasing(false);
   }
 
   modVolume = (event: PostUpdateEvent) => {
@@ -95,7 +97,6 @@ export class Game extends Engine {
   };
 
   start() {
-    this.setAntialiasing(false);
     this.timer = 0;
     this.score = 0;
 
