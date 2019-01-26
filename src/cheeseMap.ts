@@ -240,7 +240,10 @@ export class CheeseMap extends TileMap {
   };
 
   hasCheese = () => {
-    return this.data.some(cheese => cheese.solid && cheese.moldiness < 100);
+    return this.data.some(cheese =>
+      cheese.index % 2 == 0 &&
+      Math.floor(cheese.index / this.config.cols) % 2 == 0 &&
+      cheese.solid && cheese.moldiness < 100);
   };
 }
 
