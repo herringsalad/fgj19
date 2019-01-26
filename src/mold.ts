@@ -39,7 +39,7 @@ export class Mold extends Actor {
 
   update(game: Game, delta: number): void {
     super.update(game, delta);
-    if (!this.targetCheese) {
+    if (!this.targetCheese || !this.targetCheese.solid || this.targetCheese.moldiness > 100) {
       this.targetCheese = game.findCheese(this.pos);
       console.log("updating cheesetarget");
     }
