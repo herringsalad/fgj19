@@ -1,10 +1,10 @@
 import * as ex from 'excalibur';
-import {Actor, CollisionType, EventTypes, Vector} from 'excalibur';
+import {Animation, Actor, CollisionType, EventTypes, Vector} from 'excalibur';
 import {CheeseCell} from './cheeseMap';
 import {Game} from '.';
 import {Player} from "./player";
 
-export const newMold = (game: Game, anim: ex.Animation) => {
+export const newMold = (game: Game, anim: Animation, onKill: () => void) => {
   const rand = Math.random();
   let pos: Vector;
   if (rand < 0.25) {
@@ -16,7 +16,7 @@ export const newMold = (game: Game, anim: ex.Animation) => {
   } else {
     pos = new Vector(Math.random() * game.width, game.height * 1.5);
   }
-  game.add(new Mold(pos, Math.random() * 10 + 50, anim));
+  game.add(new Mold(pos, Math.random() * 10 + 50, anim, onKill));
 };
 
 export class Mold extends Actor {
@@ -28,7 +28,7 @@ export class Mold extends Actor {
   time: number;
   targetMoldiness: number;
 
-  constructor(pos: Vector, speed, moldTexture: ex.Animation) {
+  constructor(pos: Vector, speed, moldTexture: Animation, onKill: () => void) {
     super(pos.x, pos.y, 20, 20);
     this.addDrawing('stock', moldTexture);
     this.target = new Vector(400, 300);
@@ -41,6 +41,7 @@ export class Mold extends Actor {
     this.targetMoldiness = this.id > 5 ? 50 : 100;
     this.on(EventTypes.PreCollision, event => {
       if (event!.other instanceof Player) {
+        onKill();
         this.kill()
       }
     })

@@ -1,22 +1,20 @@
 import * as ex from 'excalibur';
-import {
-  Cell,
-  PostUpdateEvent,
-  EventTypes,
-  Vector,
-  Engine,
-  DisplayMode,
-  Label
-} from 'excalibur';
-import { Mold, newMold } from './mold';
-import { Player } from './player';
-import { CheeseMap } from './cheeseMap';
+import {Engine, EventTypes, Label, PostUpdateEvent, Vector} from 'excalibur';
+import {Mold, newMold} from './mold';
+import {Player} from './player';
+import {CheeseMap} from './cheeseMap';
 
 const width = 1280;
 const height = 1080;
 
+/*
 const moldmusicvol = 0; // 0.7;
 const musicvol = 0; //1;
+/*/
+const moldmusicvol = 0.7;
+const musicvol = 1;
+
+//*/
 
 export class Game extends Engine {
   width = 1280;
@@ -49,7 +47,6 @@ export class Game extends Engine {
   }
 
   modVolume = (event: PostUpdateEvent) => {
-    console.log(this.assets.moldmusic.volume, this.assets.music.volume);
     this.assets.moldmusic.volume = Math.min(
       moldmusicvol,
       this.assets.moldmusic.volume + event.delta / 4000
@@ -90,12 +87,15 @@ export class Game extends Engine {
       if (this.timer > 2000 && this.tileMap.hasCheese()) {
         this.timer = 0;
         this.moldcount += 1;
-        if (this.moldcount == 10) {
+        if (this.moldcount == 25) {
           game.once(EventTypes.PostUpdate, this.modVolume);
         }
         const sheet = new ex.SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
         const anim = sheet.getAnimationForAll(game, 125);
-        newMold(this, anim);
+        newMold(this, anim, () => {
+          console.log("mold kill");
+          this.moldcount -= 1;
+        });
       }
     });
 
@@ -122,6 +122,7 @@ export class Game extends Engine {
         this.assets.mouseTexture,
         this.tileMap.eatCheese,
         this.tileMap
+
       );
       game.currentScene.camera.strategy.lockToActor(player);
 
