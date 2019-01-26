@@ -64,7 +64,7 @@ export class Player extends Actor {
       this.pos.y + yVelocity * 64
     );
 
-    if (cheese) {
+    if (cheese && !cheese.moldiness && cheese.hp > 0) {
       cheese.consume(2);
     }
   }
@@ -91,6 +91,8 @@ export class Player extends Actor {
     this.vel.x = xVelocity * this.speed;
     this.vel.y = yVelocity * this.speed;
 
-    this.maybeEat(engine, xVelocity, yVelocity);
+    if (xVelocity || yVelocity) {
+      this.maybeEat(engine, xVelocity, yVelocity);
+    }
   }
 }

@@ -5,7 +5,8 @@ import {
   EventTypes,
   Vector,
   Engine,
-  DisplayMode
+  DisplayMode,
+  Label
 } from 'excalibur';
 import { Mold, newMold } from './mold';
 import { Player } from './player';
@@ -37,6 +38,7 @@ export class Game extends Engine {
   timer: number;
   moldcount = 0;
   score = 0;
+  scoreLabel: ex.Label;
 
   constructor() {
     super({
@@ -81,6 +83,8 @@ export class Game extends Engine {
     game.on(EventTypes.PostUpdate, event => {
       if (!event) return;
 
+      this.scoreLabel.text = `Score: ${this.score}`;
+
       this.timer += event.delta;
       if (this.timer > 2000 && this.tileMap.hasCheese()) {
         this.timer = 0;
@@ -107,15 +111,18 @@ export class Game extends Engine {
       });
       this.add(this.tileMap);
 
+      this.scoreLabel = new Label('Hello world', -10, -10, '10px Arial');
+      this.add(this.scoreLabel);
+
       const player = new Player(
         new Vector(300, 300),
         this.assets.mouseTexture,
         this.tileMap.eatCheese,
         this.tileMap
       );
-      game.currentScene.camera.strategy.lockToActor(player as any);
+      game.currentScene.camera.strategy.lockToActor(player);
 
-      this.add(player as any);
+      this.add(player);
 
       // Start game
       this.assets.music.play();

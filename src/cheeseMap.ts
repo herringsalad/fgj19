@@ -35,7 +35,7 @@ export class CheeseCell extends Cell {
     this.hp -= biteSize;
     this.game.addScore(biteSize);
 
-    if (this.hp < 0) {
+    if (this.hp <= 0) {
       this.game.tileMap.eatCheese(this);
     }
   }
@@ -65,8 +65,6 @@ export class CheeseMap extends TileMap {
   constructor(game: Game, config: ITileMapArgs) {
     super(config);
 
-    this.drawCell = this.drawCell.bind(this);
-
     const fgTilesheet = new SpriteSheet(game.assets.fgTilefile, 5, 3, 32, 32);
     this.registerSpriteSheet('default', fgTilesheet);
     const bgTilesheet = new SpriteSheet(game.assets.bgTilefile, 5, 3, 32, 32);
@@ -80,7 +78,7 @@ export class CheeseMap extends TileMap {
     );
     this.registerSpriteSheet('mold', moldTilesheet);
     const semimoldTilesheet = new SpriteSheet(
-      engine.assets.semimoldTilefile,
+      game.assets.semimoldTilefile,
       5,
       3,
       32,
@@ -144,7 +142,7 @@ export class CheeseMap extends TileMap {
             },
             i,
             j,
-            100
+            this.mapdata[Math.floor(j / 2)][Math.floor(i / 2)] ? 100 : 0
           );
           this.data[i + j * config.cols] = cd;
         })();
@@ -158,7 +156,6 @@ export class CheeseMap extends TileMap {
     const y = cell.tileY;
     const x = cell.tileX;
     cell.solid = this.mapdata[cell.dataY][cell.dataX];
-    //console.log(this.moldTiles[y][x])
     cell.pushSprite(new TileSprite('background', this.bgTiles[y][x]));
     cell.pushSprite(new TileSprite('default', this.fgTiles[y][x]));
     cell.pushSprite(new TileSprite('semimold', this.semimoldTiles[y][x]));
@@ -192,11 +189,9 @@ export class CheeseMap extends TileMap {
   cheeseAt = (x: number, y: number): CheeseCell | undefined => {
     const cell = this.getCellByPoint(x, y);
 
-    if (cell) {
-      return this.data[
-        cell.x / cell.width + (cell.y / cell.height) * this.config.rows
-      ];
-    }
+    return this.data[
+      cell.x / cell.width + (cell.y / cell.height) * this.config.rows
+    ];
   };
 
   findCheese = (pos: Vector, maxMold: number): CheeseCell | undefined => {
@@ -207,14 +202,14 @@ export class CheeseMap extends TileMap {
       const distance = new Vector(cheese.x + 8, cheese.y + 8);
       distance.subEqual(pos);
       if (
-        cheese.index % 2 == 0
-        && Math.floor(cheese.index/this.config.cols) % 2 == 0 &&
+        cheese.index % 2 == 0 &&
+        Math.floor(cheese.index / this.config.cols) % 2 == 0 &&
         cheese.solid &&
         cheese.moldiness < maxMold
       ) {
         let dist = distance.magnitude();
         let delta = dist - max_pos;
-        if(delta < 0) {
+        if (delta < 0) {
           max_pos = distance.magnitude();
           best_pos = distance.magnitude();
           targetCheese = cheese;
