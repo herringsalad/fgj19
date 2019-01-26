@@ -31,6 +31,10 @@ export class Player extends Actor {
     this.collisionType = CollisionType.Active;
     this.collisionArea = new CircleArea({ pos: new Vector(0, 0), radius: 20 });
     this.eatCheese = eatCheese;
+
+    // make player hitbox smaller
+    this.setWidth(this.getWidth() * .3);
+    this.setHeight(this.getHeight() * .3);
   }
 
   onInitialize(engine: Engine) {
@@ -54,6 +58,13 @@ export class Player extends Actor {
     if (cell && cell.solid && cell.moldiness < 100) {
       this.eatCheese(cell);
     }
+  }
+
+  draw(ctx: CanvasRenderingContext2D, delta: number) {
+    super.draw(ctx, delta);
+
+    // draw player hitbox
+    this.getBounds().debugDraw(ctx, Color.fromRGB(0,255,0,.5));
   }
 
   update(engine: Engine, delta: number) {
