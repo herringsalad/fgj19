@@ -318,5 +318,4 @@ export class Player extends Actor {
       this.eatSound.stop();
     }
   }
-  }
 }
