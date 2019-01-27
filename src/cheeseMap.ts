@@ -1,15 +1,7 @@
-import {
-  Cell,
-  ICellArgs,
-  ITileMapArgs,
-  SpriteSheet,
-  TileMap,
-  TileSprite,
-  Vector
-} from 'excalibur';
-import { getTiles } from './tilebuilder';
-import * as cheeseStructure from './cheeseBuilder';
-import { Game } from '.';
+import {Cell, ICellArgs, ITileMapArgs, SpriteSheet, TileMap, TileSprite, Vector} from 'excalibur';
+import {getTiles} from './tilebuilder';
+import * as generators from './generators';
+import {Game} from '.';
 
 export class CheeseCell extends Cell {
   public hp: number;
@@ -96,38 +88,15 @@ export class CheeseMap extends TileMap {
       Math.floor(config.rows / 4),
       Math.floor(config.cols / 4)
     );
-    const cheeseMaxRadius = 5;
-    const maxDistance = new Vector(
-      cheeseMaxRadius,
-      cheeseMaxRadius
-    ).magnitude();
 
-    this.mapdata = [];
+    [this.mapdata, this.background] = generators.perlinCircle(config.rows/2, config.cols/2, cheeseCenter);
     this.moldData = [];
     this.semimoldData = [];
-    this.background = [];
-
-    const p: [number, number, number] = [
-      Math.random() * 15,
-      Math.random() * 15,
-      Math.random() * 10000
-    ];
 
     for (let col = 0; col < config.cols / 2; col++) {
-      this.mapdata[col] = [];
       this.moldData[col] = [];
       this.semimoldData[col] = [];
-      this.background[col] = [];
-      for (let row = 0; row < config.cols / 2; row++) {
-        const distance =
-          cheeseCenter.sub(new Vector(row, col)).magnitude() > maxDistance
-            ? 1
-            : 0;
-        this.mapdata[col][row] =
-          cheeseStructure.perlin(new Vector(row, col).scale(1 / 64), p) -
-            distance >
-          0.58;
-        this.background[col][row] = !distance;
+      for (let row = 0; row < config.rows / 2; row++) {
         this.moldData[col][row] = false;
         this.semimoldData[col][row] = false;
       }
