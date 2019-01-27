@@ -14,6 +14,7 @@ export class Player extends Actor {
   eatSound: Sound;
   sleep: Sound;
   lastDirectionPressed?: Direction;
+  previousDirection: Vector;
   gasCooldown: number = 5000;
   lastGas: number = -1/0;
   time: number = 0;
@@ -26,6 +27,8 @@ export class Player extends Actor {
     sleep: Sound
   ) {
     super(initPos.x, initPos.y, 40, 40);
+
+    this.previousDirection = Vector.Right;
 
     this._postupdate = (engine: Game, delta: number) => {
       super._postupdate(engine, delta);
@@ -251,6 +254,8 @@ export class Player extends Actor {
           break;
         }
       }
+      let direction = new Vector(xVelocity, yVelocity);
+      if (direction.magnitude() > 0)  this.previousDirection = direction.normalize();
     } else {
       // Otherwise move in whatever dir is pressed
       if (engine.input.keyboard.isHeld(Input.Keys.Up)) {
@@ -287,6 +292,18 @@ export class Player extends Actor {
 
     engine.particleEmitter.isEmitting = false;
 
+    // gas emission
+    if (engine.input.keyboard.wasPressed(Input.Keys.Space)) {
+      engine.activateGame();
+      this.sleep.stop();
+    }
+    if (engine.input.keyboard.wasPressed(Input.Keys.Space) &&
+      this.time > this.lastGas + this.gasCooldown) {
+        let blowCloud = new Blow(this.pos.add(this.previousDirection.scale(70)), 20);
+        this.lastGas = this.time;
+        engine.add(blowCloud);
+    }
+
     if (xVelocity || yVelocity) {
       // set player movement speed
       const newVel = new Vector(xVelocity, yVelocity).normalize();
@@ -320,13 +337,6 @@ export class Player extends Actor {
       }
     } else {
       this.eatSound.stop();
-    }
-
-    if (engine.input.keyboard.wasPressed(Input.Keys.Space) &&
-      this.time > this.lastGas + this.gasCooldown) {
-      let blowCloud = new Blow(this.pos.add(Direction2Vec(this.lastDirectionPressed).scale(70)), 20);
-      this.lastGas = this.time;
-      engine.add(blowCloud);
     }
   }
 }
