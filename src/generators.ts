@@ -1,5 +1,5 @@
-import {Vector} from "excalibur";
-import {perlin} from "./cheeseBuilder";
+import { Vector } from 'excalibur';
+import { perlin } from './cheeseBuilder';
 
 //for (let col = 0; col < config.cols / 2 + 1; col++) {
 //  mapmask[col] = [];
@@ -43,38 +43,42 @@ Remove the wall from the list.
 
   const nbor = (x, y) => {
     if (x > 1) {
-      queue.push([x - 2, y, x, y])
+      queue.push([x - 2, y, x, y]);
     }
     if (y > 1) {
-      queue.push([x, y - 2, x, y])
+      queue.push([x, y - 2, x, y]);
     }
     if (x < cols - 2) {
-      queue.push([x + 2, y, x, y])
+      queue.push([x + 2, y, x, y]);
     }
     if (y < rows - 2) {
-      queue.push([x, y + 2, x, y])
+      queue.push([x, y + 2, x, y]);
     }
   };
 
   nbor(center.x, center.y);
 
-  while(queue.length > 0) {
+  while (queue.length > 0) {
     const i = Math.floor(Math.random() * queue.length);
     const [x, y, px, py] = queue[i];
     queue.splice(i, 1);
-    if(visited[y][x]) {
+    if (visited[y][x]) {
       continue;
     }
     visited[y][x] = true;
     mapdata[y][x] = false;
-    mapdata[(y+py)/2][(x+px)/2] = false;
+    mapdata[(y + py) / 2][(x + px) / 2] = false;
     nbor(x, y);
   }
 
   return [mapdata, background];
 }
 
-export function perlinCircle(rows: number, cols: number, center: Vector): [boolean[][], boolean[][]] {
+export function perlinCircle(
+  rows: number,
+  cols: number,
+  center: Vector
+): [boolean[][], boolean[][]] {
   const mapdata: boolean[][] = [];
   const background: boolean[][] = [];
 
@@ -91,10 +95,12 @@ export function perlinCircle(rows: number, cols: number, center: Vector): [boole
     background[col] = [];
     for (let row = 0; row < rows; row++) {
       const distance =
-        center.sub(new Vector(row, col)).magnitude() > maxDistance + Math.random() * 3
+        center.sub(new Vector(row, col)).magnitude() >
+        maxDistance + Math.random() * 3
           ? 1
           : 0;
-      mapdata[col][row] = perlin(new Vector(row, col).scale(1 / 64), p) - distance > 0.58;
+      mapdata[col][row] =
+        perlin(new Vector(row, col).scale(1 / 64), p) - distance > 0.58;
       background[col][row] = !distance;
     }
   }

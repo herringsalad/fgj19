@@ -1,7 +1,15 @@
-import {Cell, ICellArgs, ITileMapArgs, SpriteSheet, TileMap, TileSprite, Vector} from 'excalibur';
-import {getTiles} from './tilebuilder';
+import {
+  Cell,
+  ICellArgs,
+  ITileMapArgs,
+  SpriteSheet,
+  TileMap,
+  TileSprite,
+  Vector
+} from 'excalibur';
+import { getTiles } from './tilebuilder';
 import * as generators from './generators';
-import {Game} from '.';
+import { Game } from '.';
 
 export class CheeseCell extends Cell {
   public hp: number;
@@ -89,7 +97,11 @@ export class CheeseMap extends TileMap {
       Math.floor(config.cols / 4)
     );
 
-    [this.mapdata, this.background] = generators.perlinCircle(config.rows/2, config.cols/2, cheeseCenter);
+    [this.mapdata, this.background] = generators.perlinCircle(
+      config.rows / 2,
+      config.cols / 2,
+      cheeseCenter
+    );
     //[this.mapdata, this.background] = generators.prim(config.rows/2, config.cols/2, cheeseCenter);
     this.moldData = [];
     this.semimoldData = [];
@@ -210,10 +222,13 @@ export class CheeseMap extends TileMap {
   };
 
   hasCheese = () => {
-    return this.data.some(cheese =>
-      cheese.index % 2 == 0 &&
-      Math.floor(cheese.index / this.config.cols) % 2 == 0 &&
-      cheese.solid && cheese.moldiness < 100);
+    return this.data.some(
+      cheese =>
+        cheese.index % 2 == 0 &&
+        Math.floor(cheese.index / this.config.cols) % 2 == 0 &&
+        cheese.solid &&
+        cheese.moldiness < 100
+    );
   };
 }
 
