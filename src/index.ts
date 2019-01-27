@@ -11,7 +11,8 @@ import {
   Texture,
   TileMap,
   TileSprite,
-  Vector
+  Vector,
+  Input
 } from 'excalibur';
 import {Mold, newMold} from './mold';
 import {Player} from './player';
@@ -81,6 +82,18 @@ export class Game extends Engine {
       width: width,
       height: height
     });
+
+    this.input.gamepads.enabled = true;
+
+    this.input.gamepads.on('connect', (ce: any) => {
+      console.log("Gamepad connected", ce);
+      ce.gamepad.on('button', (be: ex.GamepadButtonEvent) => {
+        if(be.button === Input.Buttons.Face1) {
+           console.log("Button pressed");
+        }
+     });
+    });
+    console.log(this.input.gamepads.count());
 
     this.setAntialiasing(false);
   }
