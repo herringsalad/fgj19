@@ -92,7 +92,7 @@ export class Blow extends Actor {
   draw(ctx: CanvasRenderingContext2D, delta: number) {
     super.draw(ctx, delta);
 
-    this.getBounds().debugDraw(ctx, Color.Red);
+    //this.getBounds().debugDraw(ctx, Color.Red);
   }
 
 }
