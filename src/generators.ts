@@ -78,7 +78,7 @@ export function perlinCircle(rows: number, cols: number, center: Vector): [boole
   const mapdata: boolean[][] = [];
   const background: boolean[][] = [];
 
-  const maxDistance = new Vector(1, 1).scale((rows + cols) / 7).magnitude();
+  const maxDistance = new Vector(1, 1).scale((rows + cols) / 8).magnitude();
 
   const p: [number, number, number] = [
     Math.random() * 15,

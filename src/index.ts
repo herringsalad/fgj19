@@ -6,7 +6,6 @@ import {
   Label,
   ParticleEmitter,
   PostUpdateEvent,
-  Scene,
   Sound,
   SpriteSheet,
   Texture,
@@ -254,6 +253,15 @@ export class Game extends Engine {
       );
 
       this.add(this.particleEmitter);
+
+      //for (let i = 0; i < Math.max(width/64, height/64); i++) {
+      //  const col = new Actor(i * 64, 0,
+      //    1, height * 2, Color.White);
+      //  game.add(col);
+      //  const row = new Actor(0, i * 64,
+      //    width * 2, 1, Color.White);
+      //  game.add(row);
+      //}
 
       // Start game
       this.assets.music.play();

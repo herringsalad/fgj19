@@ -1,7 +1,7 @@
-import { Animation, Actor, CollisionType, EventTypes, Sound, Vector } from 'excalibur';
-import { CheeseCell } from './cheeseMap';
-import { Game } from '.';
-import { Player } from './player';
+import {Actor, Animation, CollisionType, EventTypes, Sound, Vector} from 'excalibur';
+import {CheeseCell} from './cheeseMap';
+import {Game} from '.';
+import {Player} from './player';
 
 export const newMold = (game: Game, anim: Animation, killSound: Sound, moldPartySound: Sound, onKill: () => void) => {
   const rand = Math.random();
@@ -83,35 +83,30 @@ export class Mold extends Actor {
       this.targetCheese = game.findCheese(this.pos, this.targetMoldiness);
       if (this.targetCheese) {
         this.targetCheese = game.findCheese(this.pos, 100);
-      }
-
-      if (this.targetCheese) {
-        this.target = new Vector(
-          this.targetCheese!.x + 16,
-          this.targetCheese!.y + 16
-        );
+        this.target = this.targetCheese!.getCenter().clone()
+          .add(new Vector(16, 16))
+          .add(new Vector(Math.random() * 3, Math.random() * 3));
       }
     }
     if (this.targetCheese) {
-      this.target = new Vector(
-        this.targetCheese.x + 16,
-        this.targetCheese.y + 16
-      );
-
       const direction = this.target.sub(this.pos);
 
       this.vel = direction.normalize().scale(this.speed);
       this.time += delta;
-      if (this.targetCheese && this.target.sub(this.pos).magnitude() < 40) {
-
+      const distance = this.target.sub(this.pos).magnitude();
+      if (distance < 40) {
         this.targetCheese.mold(delta);
+        if (distance < 5) {
+          this.vel = new Vector(0, 0);
+        }
+      } else {
+        this.vel.addEqual(
+          this.vel
+            .perpendicular()
+            .scale(Math.sin(this.time / 1000 + this.id))
+            .scale(1 / 3)
+        );
       }
-      this.vel.addEqual(
-        this.vel
-          .perpendicular()
-          .scale(Math.sin(this.time / 1000 + this.id))
-          .scale(1 / 3)
-      );
     } else {
       this.kill();
     }
