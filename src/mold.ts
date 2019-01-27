@@ -107,8 +107,6 @@ export class Mold extends Actor {
             .scale(1 / 3)
         );
       }
-    } else {
-      this.kill();
     }
   }
 
