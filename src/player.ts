@@ -38,10 +38,10 @@ export class Player extends Actor {
       this.pos.x = Math.floor(this.pos.x);
       this.pos.y = Math.floor(this.pos.y);
 
-      this.pos.x = Math.max(this.pos.x, 65);
-      this.pos.x = Math.min(this.pos.x, 1200);
-      this.pos.y = Math.max(this.pos.y, 65);
-      this.pos.y = Math.min(this.pos.y, 1200);
+      this.pos.x = Math.max(this.pos.x, -200);
+      this.pos.x = Math.min(this.pos.x, 1500);
+      this.pos.y = Math.max(this.pos.y, -200);
+      this.pos.y = Math.min(this.pos.y, 1500);
     };
 
     this.texture = texture;
@@ -306,9 +306,9 @@ export class Player extends Actor {
         this.setDrawing(didEat ? 'eatRight' : 'walkRight');
       }
 
-      if(!this.squeak.isPlaying()) {
+      if (!this.squeak.isPlaying()) {
         this.sleep.stop();
-        this.squeak.play(0.1)
+        this.squeak.play(0.1);
       }
 
       if (!didEat) {
