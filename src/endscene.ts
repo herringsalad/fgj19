@@ -1,29 +1,42 @@
-import {Actor, Color, EventTypes, Label, Scene, TextAlign, Vector} from "excalibur";
-import {Game} from "./index";
+import {
+  Actor,
+  Color,
+  EventTypes,
+  Label,
+  Scene,
+  TextAlign,
+  Vector
+} from 'excalibur';
+import { Game } from './index';
 
 export class EndScene extends Scene {
   game: Game;
+
+  scoreLabel = new Label(``, 0, 200, 'monospace');
+  hiscoreLabel = new Label(``, 0, 250, 'monospace');
 
   constructor(game: Game) {
     super();
     this.game = game;
   }
 
+  updateScore(score: number) {
+    const bestScore = Number(window.localStorage.getItem('hiscore') || '0');
+    this.scoreLabel.text = `Your score: ${score}`;
+
+    if (score <= bestScore) {
+      this.hiscoreLabel.text = `High score: ${bestScore}`;
+    } else {
+      this.hiscoreLabel.text = `New high score! (previously: ${bestScore})`;
+      window.localStorage.setItem('hiscore', `${score}`);
+    }
+  }
+
   onInitialize(engine: Game): void {
     super.onInitialize(engine);
-    const bestScore = Number(window.localStorage.getItem('hiscore') || '0');
 
     const screen = new Actor(0, 0, engine.canvas.width, engine.canvas.height);
-    screen.color = Color.fromHex("#FFD132");
-
-    const scoreLabel = new Label(`Your score: ${this.game.score}`, 0, 200, 'monospace');
-    const hiscore = new Label(``, 0, 250, 'monospace');
-    if (this.game.score <= bestScore) {
-      hiscore.text = `High score: ${bestScore}`
-    } else {
-      hiscore.text = 'New high score!';
-      window.localStorage.setItem('hiscore', `${this.game.score}`)
-    }
+    screen.color = Color.fromHex('#FFD132');
 
     const homeover = new Actor(0, -150, 210, 108);
     const rat = new Actor(0, 50, 204, 180);
@@ -41,14 +54,14 @@ export class EndScene extends Scene {
     homeover.body.pos.x = homeover.getCenter().x;
     rat.body.pos.x = rat.getCenter().x;
 
-    scoreLabel.scale = hiscore.scale = new Vector(3, 3);
-    scoreLabel.color = hiscore.color = Color.Black;
-    scoreLabel.body.pos.x = scoreLabel.getCenter().x;
-    hiscore.body.pos.x = hiscore.getCenter().x;
-    scoreLabel.textAlign = hiscore.textAlign = TextAlign.Center;
+    this.scoreLabel.scale = this.hiscoreLabel.scale = new Vector(3, 3);
+    this.scoreLabel.color = this.hiscoreLabel.color = Color.Black;
+    this.scoreLabel.body.pos.x = this.scoreLabel.getCenter().x;
+    this.hiscoreLabel.body.pos.x = this.hiscoreLabel.getCenter().x;
+    this.scoreLabel.textAlign = this.hiscoreLabel.textAlign = TextAlign.Center;
 
-    screen.add(scoreLabel);
-    screen.add(hiscore);
+    screen.add(this.scoreLabel);
+    screen.add(this.hiscoreLabel);
     screen.add(rat);
     screen.add(homeover);
 

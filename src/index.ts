@@ -75,11 +75,13 @@ export class Game extends Engine {
   moldcount = 0;
   score = 0;
   scoreLabel: Label;
-  moldLabel: Label;
+  highscoreLabel: Label;
   particleEmitter: ParticleEmitter;
   player: Player;
   molds: Mold[] = [];
   active = false;
+  highScore: number;
+  endScene: EndScene;
 
   constructor() {
     super({
@@ -138,6 +140,11 @@ export class Game extends Engine {
       0,
       10000 - this.score
     )})`;
+    this.highscoreLabel.text = `Highscore: ${Math.max(
+      this.score,
+      this.highScore
+    )}`;
+
     this.modVolume(event.delta);
 
     if (this.active) {
@@ -145,7 +152,6 @@ export class Game extends Engine {
       if (this.timer > 2000 && this.tileMap.hasCheese()) {
         this.timer = 0;
         this.moldcount += 1;
-        this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
         const sheet = new SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
         const anim = sheet.getAnimationForAll(game, 500);
         this.molds.push(
@@ -156,7 +162,9 @@ export class Game extends Engine {
             this.assets.moldParty,
             () => {
               this.moldcount -= 1;
-              this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
+              this.highscoreLabel.text = `Mold particle count: ${
+                this.moldcount
+              }`;
             }
           )
         );
@@ -171,6 +179,7 @@ export class Game extends Engine {
     this.moldcount = 0;
     this.score = 0;
     this.active = false;
+    this.highScore = Number(window.localStorage.getItem('hiscore') || '0');
 
     const gameScene = new Scene(this);
     this.addScene('game', gameScene);
@@ -218,8 +227,8 @@ export class Game extends Engine {
     scoreBg.color = Color.Black;
     this.scoreLabel = new Label('', 0, 5, 'monospace');
     this.scoreLabel.color = Color.White;
-    this.moldLabel = new Label('', 200, 5, 'monospace');
-    this.moldLabel.color = Color.White;
+    this.highscoreLabel = new Label('', 200, 5, 'monospace');
+    this.highscoreLabel.color = Color.White;
 
     const player = new Player(
       new Vector((width + 360) / 2, (height + 820) / 2),
@@ -230,7 +239,7 @@ export class Game extends Engine {
       this.assets.mouseSleep,
     );
     scoreBg.add(this.scoreLabel);
-    scoreBg.add(this.moldLabel);
+    scoreBg.add(this.highscoreLabel);
     player.add(scoreBg);
 
     // best way of making room for player and furniture
@@ -308,8 +317,8 @@ export class Game extends Engine {
       ...Object.keys(this.assets).map(textureName => this.assets[textureName])
     ]);
 
-    const endscene = new EndScene(this);
-    this.addScene('end', endscene);
+    this.endScene = new EndScene(this);
+    this.addScene('end', this.endScene);
 
     // this.isDebug = true;
 
@@ -327,6 +336,7 @@ export class Game extends Engine {
     this.assets.music.stop();
     this.assets.moldmusic.stop();
     this.removeScene('game');
+    this.endScene.updateScore(this.score);
     this.goToScene('end');
   };
 }
