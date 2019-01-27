@@ -5,7 +5,6 @@ import {
   EventTypes,
   Label,
   ParticleEmitter,
-  PostUpdateEvent,
   Sound,
   SpriteSheet,
   Texture,
@@ -85,20 +84,32 @@ export class Game extends Engine {
     this.setAntialiasing(false);
   }
 
-  modVolume = (event: PostUpdateEvent) => {
-    this.assets.moldmusic.volume = Math.min(
-      moldmusicvol,
-      this.assets.moldmusic.volume + event.delta / 4000
-    );
-    this.assets.music.volume = Math.max(
-      0,
-      this.assets.music.volume - event.delta / 4000
-    );
-    if (
-      this.assets.moldmusic.volume < moldmusicvol - 0.01 ||
-      this.assets.music.volume > 0
-    ) {
-      game.once(EventTypes.PostUpdate, this.modVolume);
+  modVolume = (delta: number) => {
+    const step = delta / 4000;
+    const targetMain = this.moldcount > 25 ? 0 : musicvol;
+    const targetMold = this.moldcount > 25 ? moldmusicvol : 0;
+
+    if (Math.abs(this.assets.moldmusic.volume - targetMold) > step) {
+      if (this.assets.moldmusic.volume > targetMold) {
+        this.assets.moldmusic.volume -= step;
+      } else {
+        this.assets.moldmusic.volume += step;
+      }
+    } else {
+      if (this.assets.moldmusic.volume != targetMold) {
+        this.assets.moldmusic.volume = targetMold;
+      }
+    }
+    if (Math.abs(this.assets.music.volume - targetMain) > step) {
+      if (this.assets.music.volume > targetMain) {
+        this.assets.music.volume -= step;
+      } else {
+        this.assets.music.volume += step;
+      }
+    } else {
+      if (this.assets.music.volume != targetMain) {
+        this.assets.music.volume = targetMain;
+      }
     }
   };
 
@@ -121,15 +132,13 @@ export class Game extends Engine {
       if (!event) return;
 
       this.scoreLabel.text = `Score needed: ${Math.max(0, 10000 - this.score)}`;
+      this.modVolume(event.delta);
 
       this.timer += event.delta;
       if (this.timer > 2000 && this.tileMap.hasCheese()) {
         this.timer = 0;
         this.moldcount += 1;
         this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
-        if (this.moldcount == 25) {
-          game.once(EventTypes.PostUpdate, this.modVolume);
-        }
         const sheet = new SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
         const anim = sheet.getAnimationForAll(game, 500);
         this.molds.push(newMold(this, anim, this.assets.moldDed, this.assets.moldParty, () => {
