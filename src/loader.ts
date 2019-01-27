@@ -75,12 +75,11 @@ export class Splash extends Loader {
 
     ctx.lineWidth = 2;
     DrawUtil.roundRect(ctx, progBarPosX, progBarPosY, progBarWidth, 20, 10);
-    // @ts-ignore
-    var progress = progBarWidth * (this._numLoaded / this._resourceCount);
+    var progress =
+      progBarWidth * ((this as any)._numLoaded / (this as any)._resourceCount);
     var margin = 5;
     var progressWidth = progress - margin * 2;
     var height = 20 - margin * 2;
-    // @ts-ignore
     DrawUtil.roundRect(
       ctx,
       progBarPosX + margin,
@@ -88,7 +87,7 @@ export class Splash extends Loader {
       progressWidth > 0 ? progressWidth : 0,
       height,
       5,
-      null,
+      null as any,
       Color.White
     );
     // engine.setAntialiasing(oldAntialias);
