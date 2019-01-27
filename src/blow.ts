@@ -7,14 +7,14 @@ export const blowParticleEmitter = new ParticleEmitter({
   emitterType: EmitterType.Rectangle,
   radius: 0,
   randomRotation: true,
-  maxVel: 2,
+  maxVel: 0,
   maxAngle: Math.PI * 2,
   // particleRotationalVelocity: 2, // rotates around center. Not good for gas
-  minVel: .1,
-  numParticles: 6,
-  emitRate: 18,
-  fadeFlag: true,
-  particleLife: 1000,
+  // minVel: .1,
+  numParticles: 5,
+  emitRate: 10,
+  fadeFlag: false,
+  particleLife: 2000,
   opacity: 1,
   isEmitting: false,
   // beginColor: Color.Green,
@@ -36,8 +36,9 @@ export class Blow extends Actor {
     this.setWidth(size);
 
     this.collisionType = CollisionType.Passive;
+    this.collisionGroups.push("gas");
 
-    this.lifeLength = 3000;
+    this.lifeLength = 4000;
 
   }
 
@@ -48,7 +49,6 @@ export class Blow extends Actor {
     sound.play(.1);
 
     this.emitter = blowParticleEmitter;
-    this.emitter.particleLife = this.lifeLength;
     
     const blowParticleSprite = new SpriteSheet(
       engine.assets.blowParticles,
@@ -74,11 +74,4 @@ export class Blow extends Actor {
   stopEmitting() {
     this.emitter.isEmitting = false;
   }
-
-  draw(ctx: CanvasRenderingContext2D, delta: number) {
-    super.draw(ctx, delta);
-
-    this.getBounds().debugDraw(ctx, Color.Red);
-  }
-
 }

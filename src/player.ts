@@ -319,7 +319,7 @@ export class Player extends Actor {
     }
 
     if (engine.input.keyboard.wasPressed(Input.Keys.Space)) {
-      let blowCloud = new Blow(this.pos.add(Direction2Vec(this.lastDirectionPressed).scale(70)), 20);
+      let blowCloud = new Blow(this.pos.add(Direction2Vec(this.lastDirectionPressed).scale(70)));
       engine.add(blowCloud);
     }
   }

@@ -9,6 +9,7 @@ import {
 import { CheeseCell } from './cheeseMap';
 import { Game } from '.';
 import { Player } from './player';
+import { Blow } from './blow';
 
 export const newMold = (
   game: Game,
@@ -63,6 +64,7 @@ export class Mold extends Actor {
     this.addDrawing('stock', moldTexture);
     this.target = new Vector(400, 300);
     this.collisionType = CollisionType.Passive;
+    this.collisionGroups.push("mold");
     this.speed = speed;
     this.hp = 3;
     this.on('pointerdown', this.onClick.bind(this));
@@ -73,6 +75,13 @@ export class Mold extends Actor {
     this.killSound = killSound;
     this.on(EventTypes.PreCollision, event => {
       if (event!.other instanceof Player) {
+        this.partySound.volume = 0;
+        this.killSound.volume = 0;
+        this.partySound.stop();
+        onKill();
+        this.kill();
+      }
+      if (event!.other instanceof Blow) {
         this.partySound.volume = 0;
         this.killSound.volume = 0;
         this.partySound.stop();
