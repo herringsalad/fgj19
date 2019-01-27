@@ -1,18 +1,6 @@
 import { Vector } from 'excalibur';
 import { perlin } from './cheeseBuilder';
 
-//for (let col = 0; col < config.cols / 2 + 1; col++) {
-//  mapmask[col] = [];
-//  for (let row = 0; row < config.cols / 2 + 1; row++) {
-//    mapmask[col][row] = false;
-//  }
-//}
-//for (let col = 0; col < config.cols / 2 + 1; col++) {
-//  for (let row = 0; row < config.cols / 2 + 1; row++) {
-//    mapmask[col][row] =
-//  }
-//}
-
 export function prim(rows: number, cols: number, center: Vector) {
   /*
   Start with a grid full of walls.
