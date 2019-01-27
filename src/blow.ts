@@ -1,5 +1,6 @@
-import { Actor, ParticleEmitter, Input, Vector, Color, Sound, CollisionType, SpriteSheet, Sprite, EmitterType } from "excalibur";
-import { Game } from ".";
+import {Actor, CollisionType, Color, EmitterType, ParticleEmitter, Sound, Sprite, SpriteSheet, Vector} from "excalibur";
+import {Game} from ".";
+import {getTiles} from "./tilebuilder";
 
 export const blowParticleEmitter = new ParticleEmitter({
   startSize: 1,
@@ -49,7 +50,7 @@ export class Blow extends Actor {
 
     this.emitter = blowParticleEmitter;
     this.emitter.particleLife = this.lifeLength;
-    
+
     const blowParticleSprite = new SpriteSheet(
       engine.assets.blowParticles,
       1,
@@ -57,18 +58,31 @@ export class Blow extends Actor {
       32,
       32
     );
-      
-    this.emitter.particleSprite = (blowParticleSprite.getAnimationForAll(
-      engine,
-      250
-    ) as unknown) as Sprite;
-        
+
+    const sprite = blowParticleSprite.getAnimationForAll(engine, 250);
+    this.emitter.particleSprite = sprite as any as Sprite;
+
     this.emitter.isEmitting = true;
     this.add(this.emitter);
-      
+
     setTimeout(this.stopEmitting.bind(this), this.lifeLength - this.emitter.particleLife);
     setTimeout(this.kill.bind(this), this.lifeLength);
-      
+  }
+
+  update(engine: Game, delta: number): void {
+    super.update(engine, delta);
+
+    const cheese = engine.tileMap.cheeseAt(this.x, this.y);
+    if (cheese) {
+      if (cheese.moldiness < 100) {
+        const prev = cheese.moldiness;
+        cheese.moldiness = Math.max(0, cheese.moldiness - delta / 100);
+        if(cheese.moldiness < 50 && prev > 50) {
+          engine.tileMap.semimoldData[cheese.dataY][cheese.dataX] = false;
+          engine.tileMap.semimoldTiles = getTiles(engine.tileMap.semimoldData);
+        }
+      }
+    }
   }
 
   stopEmitting() {
