@@ -61,21 +61,21 @@ export class Splash extends Loader {
       y * windowAspectRatio
     );
 
-    let credPos = 360;
+    let credPos = 400;
 
     ctx.fillStyle = '#000000';
-    ctx.font = '20px monospace';
+    ctx.font = '12px monospace';
 
     const pushCred = (content: string) => {
-      ctx.fillText(content, 30, credPos);
-      credPos += 30;
+      ctx.fillText(content, 50, credPos);
+      credPos += 20;
     };
 
     pushCred("Credits");
     pushCred("Rasmus Eskola, programming");
     pushCred("Jaakko Hannikainen, programming");
     pushCred("Henrik Hillner, programming");
-    pushCred("Susanna Rantakylä, music");
+    pushCred("Susanna Rantakylä, music and sound effects");
     pushCred("Nils Skogman, graphics");
 
     // loading box
