@@ -28,9 +28,14 @@ export class CheeseCell extends Cell {
       this.hp -= delta / 20;
       this.game.addScore(Math.round(delta / 10));
 
+      if (this.hp < 50) {
+        this.game.tileMap.drawCell(this);
+      }
+      
       if (this.hp <= 0) {
         this.game.tileMap.eatCheese(this);
       }
+
     }
   }
 
@@ -65,6 +70,8 @@ export class CheeseMap extends TileMap {
     this.game = game;
     const fgTilesheet = new SpriteSheet(game.assets.fgTilefile, 5, 3, 32, 32);
     this.registerSpriteSheet('default', fgTilesheet);
+    const brokenCheeseTilesheet = new SpriteSheet(game.assets.brokenCheeseTilefile, 5, 3, 32, 32);
+    this.registerSpriteSheet('brokenCheese', brokenCheeseTilesheet);
     const bgTilesheet = new SpriteSheet(game.assets.bgTilefile, 5, 3, 32, 32);
     this.registerSpriteSheet('background', bgTilesheet);
     const moldTilesheet = new SpriteSheet(
@@ -139,7 +146,11 @@ export class CheeseMap extends TileMap {
     const x = cell.tileX;
     cell.solid = this.mapdata[cell.dataY][cell.dataX];
     cell.pushSprite(new TileSprite('background', this.bgTiles[y][x]));
-    cell.pushSprite(new TileSprite('default', this.fgTiles[y][x]));
+    if (this.cheeseAt(cell.x, cell.y)!.hp <= 70) {
+      cell.pushSprite(new TileSprite('brokenCheese', this.fgTiles[y][x]));
+    } else {
+      cell.pushSprite(new TileSprite('default', this.fgTiles[y][x]));
+    }
     cell.pushSprite(new TileSprite('semimold', this.semimoldTiles[y][x]));
     cell.pushSprite(new TileSprite('mold', this.moldTiles[y][x]));
   };

@@ -36,6 +36,7 @@ export class Game extends Engine {
 
   assets = {
     fgTilefile: new Texture('/assets/images/Kolo tiles.png'),
+    brokenCheeseTilefile: new Texture('assets/images/Syöty kolo tiles.png'),
     bgTilefile: new Texture('/assets/images/Tausta tiles.png'),
     moldTilefile: new Texture('/assets/images/Home kolo tiles.png'),
     cheeseParticles: new Texture(
