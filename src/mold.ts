@@ -1,9 +1,22 @@
-import {Actor, Animation, CollisionType, EventTypes, Sound, Vector} from 'excalibur';
-import {CheeseCell} from './cheeseMap';
-import {Game} from '.';
-import {Player} from './player';
+import {
+  Actor,
+  Animation,
+  CollisionType,
+  EventTypes,
+  Sound,
+  Vector
+} from 'excalibur';
+import { CheeseCell } from './cheeseMap';
+import { Game } from '.';
+import { Player } from './player';
 
-export const newMold = (game: Game, anim: Animation, killSound: Sound, moldPartySound: Sound, onKill: () => void) => {
+export const newMold = (
+  game: Game,
+  anim: Animation,
+  killSound: Sound,
+  moldPartySound: Sound,
+  onKill: () => void
+) => {
   const rand = Math.random();
   let pos: Vector;
   if (rand < 0.25) {
@@ -15,7 +28,14 @@ export const newMold = (game: Game, anim: Animation, killSound: Sound, moldParty
   } else {
     pos = new Vector(Math.random() * game.width, game.height * 2);
   }
-  const mold = new Mold(pos, Math.random() * 10 + 50, anim, killSound, moldPartySound, onKill);
+  const mold = new Mold(
+    pos,
+    Math.random() * 10 + 50,
+    anim,
+    killSound,
+    moldPartySound,
+    onKill
+  );
   game.add(mold);
   return mold;
 };
@@ -31,7 +51,14 @@ export class Mold extends Actor {
   partySound: Sound;
   killSound: Sound;
 
-  constructor(pos: Vector, speed, moldTexture: Animation, killSound, moldPartySound, onKill: () => void) {
+  constructor(
+    pos: Vector,
+    speed,
+    moldTexture: Animation,
+    killSound,
+    moldPartySound,
+    onKill: () => void
+  ) {
     super(pos.x, pos.y, 20, 20);
     this.addDrawing('stock', moldTexture);
     this.target = new Vector(400, 300);
@@ -58,18 +85,18 @@ export class Mold extends Actor {
       this.partySound.volume = 0;
       this.killSound.volume = 0;
       this.partySound.stop();
-    })
+    });
   }
 
   onInitialize() {
     if (this.partySound.instanceCount() < 5 && this.id < 1) {
       this.partySound.loop = true;
-      this.partySound.play(.1);
+      this.partySound.play(0.1);
     }
   }
 
   onPreKill() {
-    this.killSound.play(.2);
+    this.killSound.play(0.2);
     this.partySound.stop();
   }
 
@@ -83,7 +110,8 @@ export class Mold extends Actor {
       this.targetCheese = game.findCheese(this.pos, this.targetMoldiness);
       if (this.targetCheese) {
         this.targetCheese = game.findCheese(this.pos, 100);
-        this.target = this.targetCheese!.getCenter().clone()
+        this.target = this.targetCheese!.getCenter()
+          .clone()
           .add(new Vector(16, 16))
           .add(new Vector(Math.random() * 3, Math.random() * 3));
       }

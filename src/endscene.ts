@@ -1,4 +1,4 @@
-import {Actor, Color, Engine, EventTypes, Label, Scene, TextAlign, Vector} from "excalibur";
+import {Actor, Color, EventTypes, Label, Scene, TextAlign, Vector} from "excalibur";
 import {Game} from "./index";
 
 export class EndScene extends Scene {
@@ -9,14 +9,21 @@ export class EndScene extends Scene {
     this.game = game;
   }
 
-  onInitialize(engine: Engine): void {
+  onInitialize(engine: Game): void {
     super.onInitialize(engine);
+    const bestScore = Number(window.localStorage.getItem('hiscore') || '0');
 
     const screen = new Actor(0, 0, engine.canvas.width, engine.canvas.height);
     screen.color = Color.fromHex("#FFD132");
 
-    const lostLabel = new Label(`You lost the game :(`, 0, -200, '');
     const scoreLabel = new Label(`Your score: ${this.game.score}`, 0, 200, 'monospace');
+    const hiscore = new Label(``, 0, 250, 'monospace');
+    if (this.game.score <= bestScore) {
+      hiscore.text = `High score: ${bestScore}`
+    } else {
+      hiscore.text = 'New high score!';
+      window.localStorage.setItem('hiscore', `${this.game.score}`)
+    }
 
     const homeover = new Actor(0, -150, 210, 108);
     const rat = new Actor(0, 50, 204, 180);
@@ -34,18 +41,19 @@ export class EndScene extends Scene {
     homeover.body.pos.x = homeover.getCenter().x;
     rat.body.pos.x = rat.getCenter().x;
 
-    scoreLabel.scale = lostLabel.scale = new Vector(3, 3);
-    scoreLabel.color = lostLabel.color = Color.Black;
+    scoreLabel.scale = hiscore.scale = new Vector(3, 3);
+    scoreLabel.color = hiscore.color = Color.Black;
     scoreLabel.body.pos.x = scoreLabel.getCenter().x;
-    scoreLabel.textAlign = TextAlign.Center;
+    hiscore.body.pos.x = hiscore.getCenter().x;
+    scoreLabel.textAlign = hiscore.textAlign = TextAlign.Center;
 
     screen.add(scoreLabel);
-    //screen.add(lostLabel);
+    screen.add(hiscore);
     screen.add(rat);
     screen.add(homeover);
 
     rat.on(EventTypes.PointerDown, () => {
-      window.location.reload();
+      engine.restrat();
     });
 
     this.add(screen);

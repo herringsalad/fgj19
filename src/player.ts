@@ -1,6 +1,16 @@
-import {Actor, CollisionType, Engine, EventTypes, Input, Sound, SpriteSheet, Texture, Vector} from 'excalibur';
+import {
+  Actor,
+  CollisionType,
+  Engine,
+  EventTypes,
+  Input,
+  Sound,
+  SpriteSheet,
+  Texture,
+  Vector
+} from 'excalibur';
 
-import {Game} from './';
+import { Game } from './';
 
 type Direction = 'Up' | 'Down' | 'Left' | 'Right';
 
@@ -48,7 +58,7 @@ export class Player extends Actor {
       this.eatSound.volume = 0;
       this.squeak.stop();
       this.eatSound.stop();
-    })
+    });
   }
 
   onInitialize(game: Engine) {
@@ -187,6 +197,8 @@ export class Player extends Actor {
       this.lastDirectionPressed = 'Left';
     if (engine.input.keyboard.wasPressed(Input.Keys.Right))
       this.lastDirectionPressed = 'Right';
+
+    if (this.lastDirectionPressed) engine.activateGame();
 
     // If last pressed input was released, reset last pressed button
     if (
