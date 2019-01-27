@@ -90,6 +90,7 @@ export class CheeseMap extends TileMap {
     );
 
     [this.mapdata, this.background] = generators.perlinCircle(config.rows/2, config.cols/2, cheeseCenter);
+    //[this.mapdata, this.background] = generators.prim(config.rows/2, config.cols/2, cheeseCenter);
     this.moldData = [];
     this.semimoldData = [];
 
