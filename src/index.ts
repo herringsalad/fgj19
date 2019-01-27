@@ -56,6 +56,7 @@ export class Game extends Engine {
     homeover: new Texture('/assets/images/Game over.png'),
     fatMouse: new Texture('/assets/images/Fatstart big.png'),
     moldover: new Texture('/assets/images/Mold over.png'),
+    extraFatMouse: new Texture('/assets/images/Fatrat big.png'),
 
     music: new Sound('/assets/sounds/juustoa.ogg'),
     moldmusic: new Sound('/assets/sounds/homejuustoa.ogg'),
