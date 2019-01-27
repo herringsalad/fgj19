@@ -254,8 +254,6 @@ export class Player extends Actor {
           break;
         }
       }
-      let direction = new Vector(xVelocity, yVelocity);
-      if (direction.magnitude() > 0)  this.previousDirection = direction.normalize();
     } else {
       // Otherwise move in whatever dir is pressed
       if (engine.input.keyboard.isHeld(Input.Keys.Up)) {
@@ -268,6 +266,8 @@ export class Player extends Actor {
         xVelocity += 1;
       }
     }
+    let direction = new Vector(xVelocity, yVelocity);
+    if (direction.magnitude() > 0)  this.previousDirection = direction.normalize();
 
     if (!xVelocity && !yVelocity) {
       if (this.oldVel.y < 0) {
