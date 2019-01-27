@@ -12,7 +12,8 @@ import {
   TileSprite,
   Vector,
   PostUpdateEvent,
-  Sprite
+  Sprite,
+  Scene
 } from 'excalibur';
 import { Mold, newMold } from './mold';
 import { Player } from './player';
@@ -170,7 +171,8 @@ export class Game extends Engine {
     this.score = 0;
     this.active = false;
 
-    this.goToScene('default');
+    const gameScene = new Scene(this);
+    this.addScene('game', gameScene);
 
     this.assets.music.volume = musicvol;
     this.assets.moldmusic.volume = 0;
@@ -193,13 +195,13 @@ export class Game extends Engine {
         bg.getCellByIndex(i * bgSize + h).pushSprite(new TileSprite('wood', 0));
       }
     }
-    this.add(bg);
+    gameScene.add(bg);
 
     const furniture = new Actor();
     furniture.addDrawing('furniture', this.assets.furniture.asSprite());
     furniture.pos = new Vector(705, 705);
     furniture.scale = new Vector(2, 2);
-    this.add(furniture);
+    gameScene.add(furniture);
 
     this.tileMap = new CheeseMap(this, {
       x: 0,
@@ -209,7 +211,7 @@ export class Game extends Engine {
       rows: this.rows * 2,
       cols: this.cols * 2
     });
-    this.add(this.tileMap);
+    gameScene.add(this.tileMap);
 
     const scoreBg = new Actor(-150, -125, width, 20);
     scoreBg.color = Color.Black;
@@ -243,9 +245,9 @@ export class Game extends Engine {
       this.tileMap.cheeseAt((width + 470) / 2, (height + 900) / 2)!
     );
 
-    game.currentScene.camera.strategy.lockToActor(player);
+    gameScene.camera.strategy.lockToActor(player);
 
-    this.add(player);
+    gameScene.add(player);
     this.player = player;
 
     const particleSprite = new SpriteSheet(
@@ -278,7 +280,7 @@ export class Game extends Engine {
       250
     ) as unknown) as Sprite;
 
-    this.add(this.particleEmitter);
+    gameScene.add(this.particleEmitter);
 
     //for (let i = 0; i < Math.max(width/64, height/64); i++) {
     //  const col = new Actor(i * 64, 0,
@@ -294,13 +296,8 @@ export class Game extends Engine {
     this.assets.moldmusic.play();
     this.assets.music.loop = true;
     this.assets.moldmusic.loop = true;
-  };
 
-  endGame = () => {
-    game.player.kill();
-    this.molds.forEach(mold => mold.emit('stopsound'));
-    game.off(EventTypes.PostUpdate);
-    this.endScreen();
+    this.goToScene('game');
   };
 
   start() {
@@ -309,6 +306,11 @@ export class Game extends Engine {
       ...Object.keys(this.assets).map(textureName => this.assets[textureName])
     ]);
 
+    const endscene = new EndScene(this);
+    this.addScene('end', endscene);
+
+    // this.isDebug = true;
+
     return super.start(loader).then(this.postInit);
   }
 
@@ -316,11 +318,13 @@ export class Game extends Engine {
     this.postInit();
   };
 
-  endScreen = () => {
+  endGame = () => {
+    game.player.kill();
+    this.molds.forEach(mold => mold.emit('stopsound'));
+    game.off(EventTypes.PostUpdate);
     this.assets.music.stop();
     this.assets.moldmusic.stop();
-    const endscene = new EndScene(this);
-    this.addScene('end', endscene);
+    this.removeScene('game');
     this.goToScene('end');
   };
 }
