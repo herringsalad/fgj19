@@ -14,7 +14,7 @@ export class Player extends Actor {
   eatSound: Sound;
   sleep: Sound;
   lastDirectionPressed?: Direction;
-  gasCooldown: number = 2000;
+  gasCooldown: number = 5000;
   lastGas: number = -1/0;
   time: number = 0;
 
