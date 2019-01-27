@@ -39,11 +39,10 @@ export class CheeseCell extends Cell {
       if (this.hp < 50) {
         this.game.tileMap.drawCell(this);
       }
-      
+
       if (this.hp <= 0) {
         this.game.tileMap.eatCheese(this);
       }
-
     }
   }
 
@@ -78,7 +77,13 @@ export class CheeseMap extends TileMap {
     this.game = game;
     const fgTilesheet = new SpriteSheet(game.assets.fgTilefile, 5, 3, 32, 32);
     this.registerSpriteSheet('default', fgTilesheet);
-    const brokenCheeseTilesheet = new SpriteSheet(game.assets.brokenCheeseTilefile, 5, 3, 32, 32);
+    const brokenCheeseTilesheet = new SpriteSheet(
+      game.assets.brokenCheeseTilefile,
+      5,
+      3,
+      32,
+      32
+    );
     this.registerSpriteSheet('brokenCheese', brokenCheeseTilesheet);
     const bgTilesheet = new SpriteSheet(game.assets.bgTilefile, 5, 3, 32, 32);
     this.registerSpriteSheet('background', bgTilesheet);
@@ -200,6 +205,8 @@ export class CheeseMap extends TileMap {
 
   cheeseAt = (x: number, y: number): CheeseCell | undefined => {
     const cell: CheeseCell = this.getCellByPoint(x, y) as CheeseCell;
+
+    if (!cell) return undefined;
 
     return this.data[cell.dataY * 2 * this.cols + cell.dataX * 2];
   };

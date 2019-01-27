@@ -1,4 +1,4 @@
-import { Color, ILoadable, Loader, Engine } from 'excalibur';
+import {Color, ILoadable, Loader, Engine, Label, Actor} from 'excalibur';
 import { logo } from './logo';
 import { DrawUtil } from 'excalibur/dist/Util/Index';
 
@@ -60,6 +60,23 @@ export class Splash extends Loader {
       y * mouseAspectRatio * 1.5,
       y * windowAspectRatio
     );
+
+    let credPos = 400;
+
+    ctx.fillStyle = '#000000';
+    ctx.font = '12px monospace';
+
+    const pushCred = (content: string) => {
+      ctx.fillText(content, 50, credPos);
+      credPos += 20;
+    };
+
+    pushCred("Credits");
+    pushCred("Rasmus Eskola, programming");
+    pushCred("Jaakko Hannikainen, programming");
+    pushCred("Henrik Hillner, programming");
+    pushCred("Susanna Rantakylä, music and sound effects");
+    pushCred("Nils Skogman, graphics");
 
     // loading box
     if (!this.suppressPlayButton && (this as any)._playButtonShown) {
