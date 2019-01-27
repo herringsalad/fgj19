@@ -21,13 +21,15 @@ export class Player extends Actor {
   spriteSheet: SpriteSheet;
   squeak: Sound;
   eatSound: Sound;
+  sleep: Sound;
   lastDirectionPressed?: Direction;
 
   constructor(
     initPos: Vector,
     texture: Texture,
     squeak: Sound,
-    eatSound: Sound
+    eatSound: Sound,
+    sleep: Sound
   ) {
     super(initPos.x, initPos.y, 40, 40);
 
@@ -52,10 +54,12 @@ export class Player extends Actor {
 
     this.squeak = squeak;
     this.eatSound = eatSound;
+    this.sleep = sleep;
 
     this.on(EventTypes.Kill, () => {
       this.squeak.volume = 0;
       this.eatSound.volume = 0;
+      this.sleep.stop();
       this.squeak.stop();
       this.eatSound.stop();
     });
@@ -157,7 +161,9 @@ export class Player extends Actor {
     // sounds
     // mouse squeak
     this.squeak.loop = true;
-    this.squeak.play(0.1);
+    //this.squeak.play(0.1);
+    this.sleep.loop = true;
+    this.sleep.play(0.5);
   }
 
   maybeEat(engine: Game, delta: number, xVelocity: number, yVelocity: number) {
@@ -300,11 +306,17 @@ export class Player extends Actor {
         this.setDrawing(didEat ? 'eatRight' : 'walkRight');
       }
 
+      if(!this.squeak.isPlaying()) {
+        this.sleep.stop();
+        this.squeak.play(0.1)
+      }
+
       if (!didEat) {
         this.eatSound.stop();
       }
     } else {
       this.eatSound.stop();
     }
+  }
   }
 }

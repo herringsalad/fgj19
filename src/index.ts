@@ -63,6 +63,7 @@ export class Game extends Engine {
 
     mouseSqueak: new Sound('assets/sounds/hiirulainen.ogg'),
     mouseEat: new Sound('assets/sounds/mumsmums.ogg'),
+    mouseSleep: new Sound('assets/sounds/hiirikuorsaa.ogg'),
     moldParty: new Sound('assets/sounds/homeitio.ogg'),
     moldDed: new Sound('assets/sounds/homepois.ogg')
   };
@@ -225,7 +226,8 @@ export class Game extends Engine {
       // new Vector(0, 0),
       this.assets.mouseTexture,
       this.assets.mouseSqueak,
-      this.assets.mouseEat
+      this.assets.mouseEat,
+      this.assets.mouseSleep,
     );
     scoreBg.add(this.scoreLabel);
     scoreBg.add(this.moldLabel);
