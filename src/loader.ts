@@ -1,4 +1,4 @@
-import {Color, ILoadable, Loader, Engine, Label, Actor} from 'excalibur';
+import { Color, ILoadable, Loader, Engine, Label, Actor } from 'excalibur';
 import { logo } from './logo';
 import { DrawUtil } from 'excalibur/dist/Util/Index';
 
@@ -71,12 +71,12 @@ export class Splash extends Loader {
       credPos += 20;
     };
 
-    pushCred("Credits");
-    pushCred("Rasmus Eskola, programming");
-    pushCred("Jaakko Hannikainen, programming");
-    pushCred("Henrik Hillner, programming");
-    pushCred("Susanna Rantakylä, music and sound effects");
-    pushCred("Nils Skogman, graphics");
+    pushCred('Credits');
+    pushCred('Rasmus Eskola, programming');
+    pushCred('Jaakko Hannikainen, programming');
+    pushCred('Henrik Hillner, programming');
+    pushCred('Susanna Rantakylä, music and sound effects');
+    pushCred('Nils Skogman, graphics');
 
     // loading box
     if (!this.suppressPlayButton && (this as any)._playButtonShown) {
@@ -84,9 +84,9 @@ export class Splash extends Loader {
       return;
     }
 
-    var progBarWidth = window.innerWidth * 0.75;
-    var progBarPosX = window.innerWidth / 2 - progBarWidth / 2;
-    var progBarPosY = window.innerHeight * 0.7;
+    var progBarWidth = (ctx.canvas.clientWidth * 0.7) / 2;
+    var progBarPosX = ctx.canvas.clientWidth / 2 - progBarWidth * 1.25;
+    var progBarPosY = (ctx.canvas.clientHeight * 0.1) / 2;
 
     ctx.lineWidth = 2;
     DrawUtil.roundRect(ctx, progBarPosX, progBarPosY, progBarWidth, 20, 10);
@@ -95,6 +95,7 @@ export class Splash extends Loader {
     var margin = 5;
     var progressWidth = progress - margin * 2;
     var height = 20 - margin * 2;
+
     DrawUtil.roundRect(
       ctx,
       progBarPosX + margin,
@@ -102,7 +103,7 @@ export class Splash extends Loader {
       progressWidth > 0 ? progressWidth : 0,
       height,
       5,
-      null as any,
+      undefined,
       Color.White
     );
     // engine.setAntialiasing(oldAntialias);
