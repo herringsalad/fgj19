@@ -21,7 +21,7 @@ export class EndScene extends Scene {
     const homeover = new Actor(0, -150, 210, 108);
     const rat = new Actor(0, 50, 204, 180);
 
-    if (this.game.score > 8000) {
+    if (this.game.score > 10000) {
       rat.addDrawing(this.game.assets.fatMouse.asSprite());
       homeover.addDrawing(this.game.assets.moldover.asSprite());
       this.game.assets.goodendmusic.play();
