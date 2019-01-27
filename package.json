@@ -6,6 +6,7 @@
   "scripts": {
     "build": "webpack && rm -rf public && mkdir -p public/build && cp build/project.bundle.js public/build && cp -r assets public && cp index.html public && rm public/assets/sounds/*.wav",
     "deploy": "npm run build && surge -d home-sweet-home.surge.sh public",
+    "bundle": "npm run build && cd public && zip -r ../home-sweet-home.zip .",
     "start": "npm run build && webpack-dev-server --port=8000",
     "format": "prettier --write src/**/*.ts **/*.json"
   },
