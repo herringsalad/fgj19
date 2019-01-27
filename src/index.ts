@@ -48,7 +48,7 @@ export class Game extends Engine {
     bgFile: new Texture('/assets/images/Lattia tiles.png'),
     furniture: new Texture('/assets/images/Sisustus.png'),
     moldTexture: new Texture('/assets/images/Itiö sprites (10x10).png'),
-    mouseTexture: new Texture('/assets/images/Mouse sprites.png'),
+    mouseTexture: new Texture('/assets/images/Mouse sprites (45x39).png'),
 
     deadMouse: new Texture('/assets/images/Restrat big.png'),
     homeover: new Texture('/assets/images/Game over.png'),
@@ -170,6 +170,8 @@ export class Game extends Engine {
     this.score = 0;
     this.active = false;
 
+    this.goToScene('default');
+
     this.assets.music.volume = musicvol;
     this.assets.moldmusic.volume = 0;
 
@@ -217,7 +219,7 @@ export class Game extends Engine {
     this.moldLabel.color = Color.White;
 
     const player = new Player(
-      new Vector((width + 360) / 2, (height + 840) / 2),
+      new Vector((width + 360) / 2, (height + 820) / 2),
       // new Vector(0, 0),
       this.assets.mouseTexture,
       this.assets.mouseSqueak,
