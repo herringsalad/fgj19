@@ -1,9 +1,9 @@
-import { Actor, CollisionType, Engine, EventTypes, Input, Sound, SpriteSheet, Texture, Vector } from 'excalibur';
+import {Actor, CollisionType, Engine, EventTypes, Input, Sound, SpriteSheet, Texture, Vector} from 'excalibur';
 
-import { Game } from './';
-import { offsetBoundingBox } from './bbox_functions';
-import { Direction, Direction2Vec } from './Direction';
-import { Blow } from './blow';
+import {Game} from './';
+import {offsetBoundingBox} from './bbox_functions';
+import {Direction, Direction2Vec} from './Direction';
+import {Blow} from './blow';
 
 export class Player extends Actor {
   texture: Texture;
@@ -14,6 +14,9 @@ export class Player extends Actor {
   eatSound: Sound;
   sleep: Sound;
   lastDirectionPressed?: Direction;
+  gasCooldown: number = 2000;
+  lastGas: number = -1/0;
+  time: number = 0;
 
   constructor(
     initPos: Vector,
@@ -190,13 +193,14 @@ export class Player extends Actor {
     let dirVec = Direction2Vec(this.lastDirectionPressed);
     if (dirVec.magnitude() > 0) {
       const blowArea = offsetBoundingBox(this.getBounds(), dirVec.x * 20, dirVec.y * 20);
-      
+
 
     }
   }
 
   update(engine: Game, delta: number) {
     super.update(engine, delta);
+    this.time += delta;
 
     let xVelocity = 0;
     let yVelocity = 0;
@@ -318,8 +322,10 @@ export class Player extends Actor {
       this.eatSound.stop();
     }
 
-    if (engine.input.keyboard.wasPressed(Input.Keys.Space)) {
-      let blowCloud = new Blow(this.pos.add(Direction2Vec(this.lastDirectionPressed).scale(70)));
+    if (engine.input.keyboard.wasPressed(Input.Keys.Space) &&
+      this.time > this.lastGas + this.gasCooldown) {
+      let blowCloud = new Blow(this.pos.add(Direction2Vec(this.lastDirectionPressed).scale(70)), 20);
+      this.lastGas = this.time;
       engine.add(blowCloud);
     }
   }
