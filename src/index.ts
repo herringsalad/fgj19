@@ -120,7 +120,7 @@ export class Game extends Engine {
     game.on(EventTypes.PostUpdate, event => {
       if (!event) return;
 
-      this.scoreLabel.text = `Score: ${this.score}`;
+      this.scoreLabel.text = `Score needed: ${Math.max(0, 10000 - this.score)}`;
 
       this.timer += event.delta;
       if (this.timer > 2000 && this.tileMap.hasCheese()) {
@@ -190,7 +190,7 @@ export class Game extends Engine {
       scoreBg.color = Color.Black;
       this.scoreLabel = new Label('', 0, 5, 'monospace');
       this.scoreLabel.color = Color.White;
-      this.moldLabel = new Label('', 100, 5, 'monospace');
+      this.moldLabel = new Label('', 200, 5, 'monospace');
       this.moldLabel.color = Color.White;
 
       const player = new Player(
