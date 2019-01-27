@@ -15,11 +15,11 @@ import {
   Sprite,
   Scene
 } from 'excalibur';
-import {Mold, newMold} from './mold';
-import {Player} from './player';
-import {CheeseMap} from './cheeseMap';
-import {Splash} from './loader';
-import {EndScene} from "./endscene";
+import { Mold, newMold } from './mold';
+import { Player } from './player';
+import { CheeseMap } from './cheeseMap';
+import { Splash } from './loader';
+import { EndScene } from './endscene';
 
 const width = 1920 / 2;
 const height = 1080 / 2;
@@ -170,7 +170,7 @@ export class Game extends Engine {
             }
           )
         );
-      } else if (!this.tileMap.hasCheese()) {
+      } else if (this.tileMap.hasCheese()) {
         this.endGame();
       }
     }
@@ -238,7 +238,7 @@ export class Game extends Engine {
       this.assets.mouseTexture,
       this.assets.mouseSqueak,
       this.assets.mouseEat,
-      this.assets.mouseSleep,
+      this.assets.mouseSleep
     );
     scoreBg.add(this.scoreLabel);
     scoreBg.add(this.highscoreLabel);
@@ -338,8 +338,8 @@ export class Game extends Engine {
     this.assets.music.stop();
     this.assets.moldmusic.stop();
     this.removeScene('game');
-    this.endScene.updateScore(this.score);
     this.goToScene('end');
+    this.endScene.updateScore(this.score);
   };
 }
 

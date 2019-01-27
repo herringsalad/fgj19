@@ -14,6 +14,8 @@ export class EndScene extends Scene {
 
   scoreLabel = new Label(``, 0, 200, 'monospace');
   hiscoreLabel = new Label(``, 0, 250, 'monospace');
+  homeover = new Actor(0, -150, 210, 108);
+  rat = new Actor(0, 50, 204, 180);
 
   constructor(game: Game) {
     super();
@@ -30,6 +32,20 @@ export class EndScene extends Scene {
       this.hiscoreLabel.text = `New high score! (previously: ${bestScore})`;
       window.localStorage.setItem('hiscore', `${score}`);
     }
+
+    if (score >= 10000) {
+      if (score >= 13000) {
+        this.rat.setDrawing('extraFatMouse');
+      } else {
+        this.rat.setDrawing('fatMouse');
+      }
+      this.rat.setDrawing('moldover');
+      this.game.assets.goodendmusic.play();
+    } else {
+      this.rat.setDrawing('deadMouse');
+      this.rat.setDrawing('hoveover');
+      this.game.assets.badendmusic.play();
+    }
   }
 
   onInitialize(engine: Game): void {
@@ -38,25 +54,17 @@ export class EndScene extends Scene {
     const screen = new Actor(0, 0, engine.canvas.width, engine.canvas.height);
     screen.color = Color.fromHex('#FFD132');
 
-    const homeover = new Actor(0, -150, 210, 108);
-    const rat = new Actor(0, 50, 204, 180);
+    this.rat.addDrawing(
+      'extraFatMouse',
+      this.game.assets.extraFatMouse.asSprite()
+    );
+    this.rat.addDrawing('fatMouse', this.game.assets.fatMouse.asSprite());
+    this.homeover.addDrawing('moldover', this.game.assets.moldover.asSprite());
+    this.rat.addDrawing('deadMouse', this.game.assets.deadMouse.asSprite());
+    this.homeover.addDrawing('homeover', this.game.assets.homeover.asSprite());
 
-    if (this.game.score >= 10000) {
-      if (this.game.score >= 13000) {
-        rat.addDrawing(this.game.assets.extraFatMouse.asSprite());
-      } else {
-        rat.addDrawing(this.game.assets.fatMouse.asSprite());
-      }
-      homeover.addDrawing(this.game.assets.moldover.asSprite());
-      this.game.assets.goodendmusic.play();
-    } else {
-      rat.addDrawing(this.game.assets.deadMouse.asSprite());
-      homeover.addDrawing(this.game.assets.homeover.asSprite());
-      this.game.assets.badendmusic.play();
-    }
-
-    homeover.body.pos.x = homeover.getCenter().x;
-    rat.body.pos.x = rat.getCenter().x;
+    this.homeover.body.pos.x = this.homeover.getCenter().x;
+    this.rat.body.pos.x = this.rat.getCenter().x;
 
     this.scoreLabel.scale = this.hiscoreLabel.scale = new Vector(3, 3);
     this.scoreLabel.color = this.hiscoreLabel.color = Color.Black;
@@ -66,10 +74,10 @@ export class EndScene extends Scene {
 
     screen.add(this.scoreLabel);
     screen.add(this.hiscoreLabel);
-    screen.add(rat);
-    screen.add(homeover);
+    screen.add(this.rat);
+    screen.add(this.homeover);
 
-    rat.on(EventTypes.PointerDown, () => {
+    this.rat.on(EventTypes.PointerDown, () => {
       engine.restrat();
     });
 
