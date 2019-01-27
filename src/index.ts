@@ -170,7 +170,7 @@ export class Game extends Engine {
             }
           )
         );
-      } else if (this.tileMap.hasCheese()) {
+      } else if (!this.tileMap.hasCheese()) {
         this.endGame();
       }
     }
