@@ -12,11 +12,11 @@ import {
   TileSprite,
   Vector
 } from 'excalibur';
-import {Mold, newMold} from './mold';
-import {Player} from './player';
-import {CheeseMap} from './cheeseMap';
-import {Splash} from './loader';
-import {EndScene} from "./endscene";
+import { Mold, newMold } from './mold';
+import { Player } from './player';
+import { CheeseMap } from './cheeseMap';
+import { Splash } from './loader';
+import { EndScene } from './endscene';
 
 const width = 1920 / 2;
 const height = 1080 / 2;
@@ -74,6 +74,7 @@ export class Game extends Engine {
   particleEmitter: ParticleEmitter;
   player: Player;
   molds: Mold[] = [];
+  active = false;
 
   constructor() {
     super({
@@ -121,6 +122,10 @@ export class Game extends Engine {
     this.score += points;
   };
 
+  activateGame = () => {
+    this.active = true;
+  };
+
   start() {
     this.timer = 0;
     this.score = 0;
@@ -131,25 +136,38 @@ export class Game extends Engine {
     game.on(EventTypes.PostUpdate, event => {
       if (!event) return;
 
-      this.scoreLabel.text = `Score needed: ${Math.max(0, 10000 - this.score)}`;
+      this.scoreLabel.text = `Score ${this.score} (needed: ${Math.max(
+        0,
+        10000 - this.score
+      )})`;
       this.modVolume(event.delta);
 
-      this.timer += event.delta;
-      if (this.timer > 2000 && this.tileMap.hasCheese()) {
-        this.timer = 0;
-        this.moldcount += 1;
-        this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
-        const sheet = new SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
-        const anim = sheet.getAnimationForAll(game, 500);
-        this.molds.push(newMold(this, anim, this.assets.moldDed, this.assets.moldParty, () => {
-          this.moldcount -= 1;
+      if (this.active) {
+        this.timer += event.delta;
+        if (this.timer > 2000 && this.tileMap.hasCheese()) {
+          this.timer = 0;
+          this.moldcount += 1;
           this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
-        }));
-      } else if (!this.tileMap.hasCheese()) {
-        game.player.kill();
-        this.molds.forEach(mold => mold.emit('stopsound'));
-        game.off(EventTypes.PostUpdate);
-        this.endScreen();
+          const sheet = new SpriteSheet(game.assets.moldTexture, 1, 3, 10, 10);
+          const anim = sheet.getAnimationForAll(game, 500);
+          this.molds.push(
+            newMold(
+              this,
+              anim,
+              this.assets.moldDed,
+              this.assets.moldParty,
+              () => {
+                this.moldcount -= 1;
+                this.moldLabel.text = `Mold particle count: ${this.moldcount}`;
+              }
+            )
+          );
+        } else if (!this.tileMap.hasCheese()) {
+          game.player.kill();
+          this.molds.forEach(mold => mold.emit('stopsound'));
+          game.off(EventTypes.PostUpdate);
+          this.endScreen();
+        }
       }
     });
 
@@ -286,7 +304,7 @@ export class Game extends Engine {
     const endscene = new EndScene(this);
     this.addScene('end', endscene);
     this.goToScene('end');
-  }
+  };
 }
 
 const game = new Game();
