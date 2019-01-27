@@ -15,11 +15,11 @@ import {
   Sprite,
   Scene
 } from 'excalibur';
-import { Mold, newMold } from './mold';
-import { Player } from './player';
-import { CheeseMap } from './cheeseMap';
-import { Splash } from './loader';
-import { EndScene } from './endscene';
+import {Mold, newMold} from './mold';
+import {Player} from './player';
+import {CheeseMap} from './cheeseMap';
+import {Splash} from './loader';
+import {EndScene} from "./endscene";
 
 const width = 1920 / 2;
 const height = 1080 / 2;
@@ -45,6 +45,7 @@ export class Game extends Engine {
     cheeseParticles: new Texture(
       '/assets/images/Particulate cheese sprites (10x10).png'
     ),
+    blowParticles: new Texture('assets/images/Kaasupartikkelit (32x32).png'),
     semimoldTilefile: new Texture('/assets/images/Semihome kolo tiles.png'),
     bgFile: new Texture('/assets/images/Lattia tiles.png'),
     furniture: new Texture('/assets/images/Sisustus.png'),

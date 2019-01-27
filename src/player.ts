@@ -1,18 +1,9 @@
-import {
-  Actor,
-  CollisionType,
-  Engine,
-  EventTypes,
-  Input,
-  Sound,
-  SpriteSheet,
-  Texture,
-  Vector
-} from 'excalibur';
+import { Actor, CollisionType, Engine, EventTypes, Input, Sound, SpriteSheet, Texture, Vector } from 'excalibur';
 
 import { Game } from './';
-
-type Direction = 'Up' | 'Down' | 'Left' | 'Right';
+import { offsetBoundingBox } from './bbox_functions';
+import { Direction, Direction2Vec } from './Direction';
+import { Blow } from './blow';
 
 export class Player extends Actor {
   texture: Texture;
@@ -195,6 +186,15 @@ export class Player extends Actor {
     // this.getBounds().debugDraw(ctx, Color.fromRGB(0, 255, 0, 0.5));
   }
 
+  blow() {
+    let dirVec = Direction2Vec(this.lastDirectionPressed);
+    if (dirVec.magnitude() > 0) {
+      const blowArea = offsetBoundingBox(this.getBounds(), dirVec.x * 20, dirVec.y * 20);
+      
+
+    }
+  }
+
   update(engine: Game, delta: number) {
     super.update(engine, delta);
 
@@ -316,6 +316,11 @@ export class Player extends Actor {
       }
     } else {
       this.eatSound.stop();
+    }
+
+    if (engine.input.keyboard.wasPressed(Input.Keys.Space)) {
+      let blowCloud = new Blow(this.pos.add(Direction2Vec(this.lastDirectionPressed).scale(70)), 20);
+      engine.add(blowCloud);
     }
   }
 }
