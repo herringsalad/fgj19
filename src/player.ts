@@ -62,7 +62,7 @@ export class Player extends Actor {
   }
 
   onInitialize(game: Engine) {
-    this.spriteSheet = new SpriteSheet(this.texture, 1, 20, 39, 45);
+    this.spriteSheet = new SpriteSheet(this.texture, 1, 23, 39, 45);
     this.scale = new Vector(2, 2);
 
     const animSpeed = 200;
@@ -145,7 +145,14 @@ export class Player extends Actor {
     this.addDrawing('walkUp', walkUp);
     this.addDrawing('eatUp', eatUp);
 
-    this.setDrawing('idleRight');
+    const sleeping = this.spriteSheet.getAnimationByIndices(
+      game,
+      [20, 21, 20, 22],
+      1000
+    );
+    this.addDrawing('sleeping', sleeping);
+
+    this.setDrawing('sleeping');
 
     // sounds
     // mouse squeak
