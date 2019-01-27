@@ -1,4 +1,4 @@
-import { Color, ILoadable, Loader } from 'excalibur';
+import { Color, ILoadable, Loader, Engine } from 'excalibur';
 import { logo } from './logo';
 import { DrawUtil } from 'excalibur/dist/Util/Index';
 
@@ -21,8 +21,7 @@ export class Splash extends Loader {
   };
 
   public draw(ctx: CanvasRenderingContext2D) {
-    // @ts-ignore
-    const engine = this._engine;
+    const engine: Engine = (this as any)._engine;
     let canvasHeight = engine.canvasHeight / window.devicePixelRatio;
     let canvasWidth = engine.canvasWidth / window.devicePixelRatio;
     let windowAspectRatio = window.innerWidth / window.innerHeight;
@@ -63,8 +62,7 @@ export class Splash extends Loader {
     );
 
     // loading box
-    // @ts-ignore
-    if (!this.suppressPlayButton && this._playButtonShown) {
+    if (!this.suppressPlayButton && (this as any)._playButtonShown) {
       engine.setAntialiasing(oldAntialias);
       return;
     }

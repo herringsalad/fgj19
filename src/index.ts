@@ -11,7 +11,8 @@ import {
   TileMap,
   TileSprite,
   Vector,
-  PostUpdateEvent
+  PostUpdateEvent,
+  Sprite
 } from 'excalibur';
 import { Mold, newMold } from './mold';
 import { Player } from './player';
@@ -267,11 +268,12 @@ export class Game extends Engine {
       isEmitting: false
     });
 
-    // @ts-ignore: this works fine ¯\_(ツ)_/¯
-    this.particleEmitter.particleSprite = particleSprite.getAnimationForAll(
+    // oddly enough typings won't let you pass animations to particleEmitters,
+    // but they work just fine ¯\_(ツ)_/¯
+    this.particleEmitter.particleSprite = (particleSprite.getAnimationForAll(
       game,
       250
-    );
+    ) as unknown) as Sprite;
 
     this.add(this.particleEmitter);
 
